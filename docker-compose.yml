@@ -15,6 +15,7 @@ services:
     restart: always
     networks:
       - tehkly_network
+      - proxy_network
 
   tehkly_frontend:
     container_name: tehkly_frontend
@@ -33,7 +34,10 @@ services:
     restart: always
     networks:
       - tehkly_network
+      - proxy_network
 
 networks:
   tehkly_network:
     driver: bridge
+  proxy_network:
+    external: true
