@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  tehkly_backend:
+    container_name: tehkly_backend
+    image: ${DOCKER_USER}/tehkly-backend:latest
+    build:
+      context: ./tehkly-core
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+    restart: always
+    networks:
+      - tehkly_network
+
+  tehkly_frontend:
+    container_name: tehkly_frontend
+    image: ${DOCKER_USER}/tehkly-frontend:latest
+    build:
+      context: ./tehkly-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - NEXT_PUBLIC_API_URL=http://tehkly_backend:4000
+    depends_on:
+      - tehkly_backend
+    restart: always
+    networks:
+      - tehkly_network
+
+networks:
+  tehkly_network:
+    driver: bridge
