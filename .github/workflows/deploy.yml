@@ -50,6 +50,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             cd ~/tehkly
+            export DOCKER_USER=${{ secrets.DOCKER_USER }}
             docker-compose pull
-            docker-compose up -d
+            docker-compose up -d --force-recreate
             docker image prune -f
