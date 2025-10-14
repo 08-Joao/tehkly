@@ -1,25 +1,28 @@
 'use client';
 
-import React, { useState, useEffect, useRef, createContext, useContext, ReactNode } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from "next/image";
-import { 
-    Sun, Moon, Search, X, CheckCircle, AlertTriangle, XCircle, ChevronUp, MoreVertical, 
-    LucideIcon, User, Mail, ArrowRight, Menu
-} from 'lucide-react';
+
+import { Sun, Moon, Magnifer, CheckCircle, ShieldWarning, CloseCircle, AltArrowUp, 
+        User, Letter, ArrowRight, HamburgerMenu
+} from '@solar-icons/react'; 
+
+import { MoreVertical, LucideIcon} from 'lucide-react';
 import { FaDocker, FaReact, FaNode } from 'react-icons/fa';
-import { SiNextdotjs, SiNestjs, SiTypescript, SiPostgresql } from 'react-icons/si';
-import { Button } from '@/components/Button'
-import { Badge } from '@/components/Badge'
-import { Card } from '@/components/Card'
-import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/components/Dropdown";
-import { Input } from '@/components/Input'
-import { Modal } from "@/components/Modal"
-import { Navbar } from '@/components/Navbar'
-import { SkeletonLoader } from "@/components/SkeletonLoader"
-import { Switch } from "@/components/Switch"
-import { Toaster } from "@/components/Toaster"
-import { Tooltip } from "@/components/Tooltip"
+import { SiNextdotjs, SiNestjs, SiTypescript, SiPostgresql, SiN8N, SiKubernetes } from 'react-icons/si';
 import { FaWhatsapp } from 'react-icons/fa6';
+
+import { Button } from '@/components/ui/Button'
+import { Badge } from '@/components/ui/Badge'
+import { Card } from '@/components/ui/Card'
+import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/components/ui/Dropdown";
+import { Input } from '@/components/ui/Input'
+import { Modal } from "@/components/ui/Modal"
+import { Navbar } from '@/components/ui/Navbar'
+import { SkeletonLoader } from "@/components/ui/SkeletonLoader"
+import { Switch } from "@/components/ui/Switch"
+import { Toaster } from "@/components/ui/Toaster"
+import { Tooltip } from "@/components/ui/Tooltip"
 
 // --- Tipos e Helpers Globais ---
 type IconType = LucideIcon;
@@ -32,24 +35,18 @@ const IconWrapper = ({ icon: Icon, className = '' }: IconWrapperProps) => (
   <Icon className={`inline-block h-5 w-5 ${className}`} />
 );
 
-// --- Component: Toaster ---
 type ToasterType = 'success' | 'error' | 'warning';
-interface ToasterProps {
-    message: string;
-    type?: ToasterType;
-    onClose: () => void;
-}
 
 // --- Dados para a Página ---
 const technologies = [
-  { name: 'Docker', icon: <FaDocker size={48} /> },
-  { name: 'Next.js', icon: <SiNextdotjs size={48} /> },
-  { name: 'Nest.js', icon: <SiNestjs size={48} /> },
-  { name: 'React', icon: <FaReact size={48} /> },
-  { name: 'PostgreSQL', icon: <SiPostgresql size={48} /> },
-  { name: 'EvolutionAPI', icon: <FaWhatsapp size={48} /> },
-  { name: 'TypeScript', icon: <SiTypescript size={48} /> },
-  { name: 'Node.js', icon: <FaNode size={48} /> },
+  { name: 'Docker', icon: <FaDocker size={60} /> },
+  { name: 'Next.js', icon: <SiNextdotjs size={60} /> },
+  { name: 'NestJS', icon: <SiNestjs size={60} /> },
+  { name: 'React', icon: <FaReact size={60} /> },
+  { name: 'PostgreSQL', icon: <SiPostgresql size={60} /> },
+  { name: 'TypeScript', icon: <SiTypescript size={60} /> },
+  { name: 'Node.js', icon: <FaNode size={60} /> },
+  { name: 'n8n', icon: <SiN8N size={60} /> }
 ];
 
 const projects = [
@@ -112,7 +109,6 @@ export default function Home() {
 
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Aqui você adicionaria a lógica de envio do formulário
     setToaster({ show: true, message: 'Mensagem enviada com sucesso!', type: 'success' });
   };
   
@@ -128,7 +124,7 @@ export default function Home() {
   return (
     <div className="bg-gray-100 dark:bg-black text-gray-800 dark:text-[#D5D5D5]">
       {toaster?.show && (
-        <Toaster message={toaster.message} type={toaster.type} onClose={closeToaster} />
+        <Toaster message={toaster.message} type={toaster.type as ToasterType} onClose={closeToaster} />
       )}
       
       <Modal isOpen={isModalOpen} onClose={closeProjectModal} title={selectedProject?.title ?? ''}>
@@ -140,17 +136,28 @@ export default function Home() {
         </div>
       </Modal>
 
-      <Navbar isDarkMode={isDarkMode} onThemeToggle={handleThemeToggle}>
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#656565] dark:text-[#D5D5D5]">
+      <Navbar 
+        isDarkMode={isDarkMode} 
+        onThemeToggle={handleThemeToggle}
+        lightModeIcon={<Sun size={25} weight="LineDuotone" className="text-yellow-400" />}
+        darkModeIcon={<Moon size={25} weight="LineDuotone" className="text-slate-400" />}
+      >
+        <div className="hidden md:flex items-center gap-5 text-sm font-medium text-[#656565] dark:text-[#D5D5D5]">
           {navLinks.map(link => (
             <a key={link.href} href={link.href} className="hover:text-black dark:hover:text-white transition-colors">{link.label}</a>
           ))}
         </div>
+        <Button variant="primary">
+            Registre-se
+        </Button>
+        <Button variant="ghost">
+            Login
+        </Button>
         <div className="md:hidden">
             <Dropdown>
                 <DropdownTrigger>
                     <Button variant="ghost" className="p-2">
-                        <Menu />
+                        <HamburgerMenu />
                     </Button>
                 </DropdownTrigger>
                 <DropdownContent>
@@ -207,8 +214,8 @@ export default function Home() {
                 <p className="text-gray-600 dark:text-[#656565] mb-16 text-lg">
                     Utilizamos as ferramentas mais modernas para construir soluções de alta performance.
                 </p>
-                <div className="flex justify-center">
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                <div className="flex flex-wrap justify-center">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                     {technologies.map((tech) => (
                         <Tooltip key={tech.name} content={tech.name}>
                             <div className="aspect-square bg-gray-200/50 dark:bg-white/5 border border-gray-300 dark:border-[#656565]/20 rounded-2xl flex flex-col items-center justify-center hover:border-[#C0FF6B]/50 hover:shadow-lg hover:shadow-[#C0FF6B]/10 hover:-translate-y-1 transition-all duration-200 cursor-pointer p-4 text-[#C0FF6B]">
@@ -279,7 +286,7 @@ export default function Home() {
             
             <form onSubmit={handleContactSubmit} className="bg-white/50 dark:bg-white/5 border border-gray-300 dark:border-[#656565]/30 rounded-lg p-8 space-y-6 text-left">
                 <Input icon={User} placeholder="Seu nome completo" required />
-                <Input icon={Mail} type="email" placeholder="Seu melhor e-mail" required />
+                <Input icon={Letter} type="email" placeholder="Seu melhor e-mail" required />
                 <textarea
                     rows={5}
                     className="w-full bg-transparent border-2 border-[#D5D5D5]/50 dark:border-[#656565] rounded-lg p-4 text-black dark:text-white placeholder:text-[#656565] focus:outline-none focus:ring-2 focus:ring-[#C0FF6B] focus:border-[#C0FF6B] transition-colors duration-200 resize-none"

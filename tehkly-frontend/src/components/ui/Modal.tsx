@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef, createContext, useContext, ReactNode } from 'react';
-import { Sun, Moon, Search, X, CheckCircle, AlertTriangle, XCircle, ChevronUp, MoreVertical, LucideIcon } from 'lucide-react';
-
+import React, { useEffect, ReactNode } from 'react';
+import { LucideIcon } from 'lucide-react';
+import { CloseSquare } from '@solar-icons/react/ssr';
 // --- Tipos Globais ---
 type IconType = LucideIcon;
 
@@ -35,7 +35,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-black dark:text-white">{title}</h2>
           <button onClick={onClose} className="text-[#656565] dark:text-[#D5D5D5] hover:text-black dark:hover:text-white transition-colors">
-            <IconWrapper icon={X} className="h-7 w-7" />
+            <IconWrapper icon={CloseSquare} className="h-10 w-10" />
           </button>
         </div>
         <div>{children}</div>

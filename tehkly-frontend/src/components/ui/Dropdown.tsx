@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, createContext, useContext, ReactNode } from 'react';
-import { Sun, Moon, Search, X, CheckCircle, AlertTriangle, XCircle, ChevronUp, MoreVertical, LucideIcon } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 
 // --- Tipos Globais ---
 type IconType = LucideIcon;
