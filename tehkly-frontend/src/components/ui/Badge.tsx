@@ -21,9 +21,9 @@ interface BadgeProps {
 export const Badge = ({ children, variant = 'primary', className = '' }: BadgeProps) => {
   const baseStyles = 'px-3 py-1 text-xs font-bold rounded-lg inline-block';
   const variants: Record<BadgeVariant, string> = {
-    primary: 'bg-[#C0FF6B] text-black',
-    secondary: 'bg-[#656565] text-white',
-    neutral: 'bg-[#D5D5D5] text-black',
+    primary: 'bg-primary text-primary-foreground',
+    secondary: 'bg-secondary text-primary-foreground',
+    neutral: 'bg-border text-foreground',
   };
   return <span className={`${baseStyles} ${variants[variant]} ${className}`}>{children}</span>;
 };

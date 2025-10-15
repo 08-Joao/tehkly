@@ -52,7 +52,7 @@ export const Toaster = ({ message, type = 'success', onClose }: ToasterProps) =>
   // --- Paleta de Cores e Ícones Aprimorada ---
   const variants: Record<ToasterType, { style: string; icon: IconComponent; }> = {
     success: {
-        style: 'bg-[#C0FF6B]/80 backdrop-blur-sm text-black border-green-800/30',
+        style: 'bg-primary/80 backdrop-blur-sm text-primary-foreground border-primary/30',
         icon: CheckCircle
     },
     error: {
@@ -83,7 +83,7 @@ export const Toaster = ({ message, type = 'success', onClose }: ToasterProps) =>
       <button 
           onClick={handleClose} 
           aria-label="Fechar notificação"
-          className="ml-2 p-1 rounded-full hover:bg-black/10 transition-colors"
+          className="ml-2 p-1 rounded-full hover:bg-foreground/10 transition-colors"
       >
         <IconWrapper icon={CloseSquare} className="h-5 w-5"/>
       </button>

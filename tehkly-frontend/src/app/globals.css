@@ -1,26 +1,140 @@
 @import "tailwindcss";
 
+/* ============================================ */
+/* VARIÁVEIS DE COR E TEMAS                     */
+/* ============================================ */
+
+/* --- TEMA CLARO (Padrão) --- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #ffffff;      /* Fundo branco padrão */
+  --foreground: #000000;      /* Texto preto */
+
+  --primary: #C0FF6B;          /* Verde lima como cor de destaque */
+  --primary-foreground: #000000; /* Texto preto para contraste com o verde */
+  
+  --secondary: #656565;        /* Cinza para textos secundários */
+  --border: #D5D5D5;           /* Cinza claro para bordas e divisores */
+
+  /* Cores para componentes como cards, para se destacarem do fundo */
+  --card: #F9F9F9;
+  --card-foreground: #000000;
+  
+  --ring: #C0FF6B;             /* Cor do anel de foco */
+
+  /* Elevações (tons de fundo com profundidade crescente) */
+  --elevation-1: #F3F3F3; /* leve diferença para se destacar */
+  --elevation-2: #ECECEC;
+  --elevation-3: #E6E6E6;
+
+  /* Sombras suaves de elevação */
+  --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-2: 0 2px 6px rgba(0, 0, 0, 0.10);
+  --shadow-3: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
+/* --- TEMA ESCURO --- */
+.dark {
+  --background: #000000;
+  --foreground: #D5D5D5;
+
+  --primary: #C0FF6B;
+  --primary-foreground: #000000;
+
+  --secondary: #909090; /* um pouco mais claro no dark */
+  --border: #303030;
+
+  --card: #1A1A1A;
+  --card-foreground: #D5D5D5;
+
+  --ring: #C0FF6B;
+
+  /* Elevações no dark theme (clareando levemente o fundo para cada nível) */
+  --elevation-1: #141414;
+  --elevation-2: #1E1E1E;
+  --elevation-3: #2A2A2A;
+
+  /* Sombras invertidas mais suaves (simulando luz difusa) */
+  --shadow-1: 0 1px 3px rgba(255, 255, 255, 0.04);
+  --shadow-2: 0 2px 6px rgba(255, 255, 255, 0.06);
+  --shadow-3: 0 4px 12px rgba(255, 255, 255, 0.08);
+}
+
+/* --- Mapeamento para o sistema de temas --- */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-ring: var(--ring);
+
+  /* Elevação e sombra */
+  --color-elevation-1: var(--elevation-1);
+  --color-elevation-2: var(--elevation-2);
+  --color-elevation-3: var(--elevation-3);
+  --shadow-elevation-1: var(--shadow-1);
+  --shadow-elevation-2: var(--shadow-2);
+  --shadow-elevation-3: var(--shadow-3);
+
+  /* Fontes */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+/* --- Tema automático via sistema --- */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not(.light) {
+    --background: #000000;
+    --foreground: #D5D5D5;
+    --primary: #C0FF6B;
+    --primary-foreground: #000000;
+    --secondary: #909090;
+    --border: #303030;
+    --card: #1A1A1A;
+    --card-foreground: #D5D5D5;
+    --ring: #C0FF6B;
+    --elevation-1: #141414;
+    --elevation-2: #1E1E1E;
+    --elevation-3: #2A2A2A;
   }
 }
 
+/* ============================================ */
+/* ESTILOS GLOBAIS                              */
+/* ============================================ */
+
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans, Arial, Helvetica, sans-serif);
+}
+
+/* Transição suave ao trocar de tema */
+*,
+*::before,
+*::after {
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Classes utilitárias para elevação */
+.elevation-1 {
+  background-color: var(--elevation-1);
+  box-shadow: var(--shadow-1);
+}
+
+.elevation-2 {
+  background-color: var(--elevation-2);
+  box-shadow: var(--shadow-2);
+}
+
+.elevation-3 {
+  background-color: var(--elevation-3);
+  box-shadow: var(--shadow-3);
 }

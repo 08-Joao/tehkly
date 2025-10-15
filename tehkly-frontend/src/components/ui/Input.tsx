@@ -16,13 +16,13 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   iconPosition?: 'left' | 'right';
 }
 export const Input = ({ type = 'text', placeholder, icon, iconPosition = 'left', className = '', ...props }: InputProps) => {
-  const baseStyles = 'w-full bg-transparent border-2 border-[#D5D5D5]/50 dark:border-[#656565] rounded-lg py-2.5 text-black dark:text-white placeholder:text-[#656565] focus:outline-none focus:ring-2 focus:ring-[#C0FF6B] focus:border-[#C0FF6B] transition-colors duration-200';
+  const baseStyles = 'w-full bg-transparent border-2 border-border rounded-lg py-2.5 text-foreground placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-colors duration-200';
   const paddingStyles = icon ? (iconPosition === 'left' ? 'pl-10 pr-4' : 'pr-10 pl-4') : 'px-4';
 
   return (
     <div className="relative w-full">
       {icon && (
-        <div className={`absolute top-1/2 -translate-y-1/2 text-[#656565] ${iconPosition === 'left' ? 'left-3' : 'right-3'}`}>
+        <div className={`absolute top-1/2 -translate-y-1/2 text-secondary ${iconPosition === 'left' ? 'left-3' : 'right-3'}`}>
           <IconWrapper icon={icon} />
         </div>
       )}

@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Image from "next/image";
 
 import { Sun, Moon, Magnifer, CheckCircle, ShieldWarning, CloseCircle, AltArrowUp, 
         User, Letter, ArrowRight, HamburgerMenu
@@ -77,6 +76,9 @@ type Project = typeof projects[0];
 
 // --- Componente Principal da Página ---
 export default function Home() {
+  // ============================================
+  // ESTADOS DO COMPONENTE
+  // ============================================
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -85,11 +87,9 @@ export default function Home() {
   
   // Efeito para o modo escuro
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+    const root = window.document.documentElement;
+    root.classList.remove(isDarkMode ? 'light' : 'dark');
+    root.classList.add(isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
 
   // Efeito para simular carregamento dos projetos
@@ -98,6 +98,9 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, []);
 
+  // ============================================
+  // HANDLERS DE EVENTOS
+  // ============================================
   const handleThemeToggle = () => setIsDarkMode(!isDarkMode);
 
   const openProjectModal = (project: Project) => {
@@ -122,13 +125,14 @@ export default function Home() {
   ];
 
   return (
-    <div className="bg-gray-100 dark:bg-black text-gray-800 dark:text-[#D5D5D5]">
+    <div>
+
       {toaster?.show && (
         <Toaster message={toaster.message} type={toaster.type as ToasterType} onClose={closeToaster} />
       )}
       
       <Modal isOpen={isModalOpen} onClose={closeProjectModal} title={selectedProject?.title ?? ''}>
-        <p className="text-gray-600 dark:text-gray-400 mb-4">{selectedProject?.fullDescription}</p>
+        <p className="text-secondary mb-4">{selectedProject?.fullDescription}</p>
         <div className="flex gap-2 flex-wrap">
           {selectedProject?.tags.map(tag => (
             <Badge key={tag} variant="secondary">{tag}</Badge>
@@ -136,38 +140,37 @@ export default function Home() {
         </div>
       </Modal>
 
-      <Navbar 
-        isDarkMode={isDarkMode} 
+      {/* Usando o componente Navbar no lugar do <nav> antigo */}
+      <Navbar
+        isDarkMode={isDarkMode}
         onThemeToggle={handleThemeToggle}
-        lightModeIcon={<Sun size={25} weight="LineDuotone" className="text-yellow-400" />}
-        darkModeIcon={<Moon size={25} weight="LineDuotone" className="text-slate-400" />}
+        centerContent={
+          <div className="flex items-center gap-5 text-sm font-medium text-secondary">
+            {navLinks.map(link => (
+              <a key={link.href} href={link.href} className="hover:text-foreground transition-colors">{link.label}</a>
+            ))}
+          </div>
+        }
       >
-        <div className="hidden md:flex items-center gap-5 text-sm font-medium text-[#656565] dark:text-[#D5D5D5]">
-          {navLinks.map(link => (
-            <a key={link.href} href={link.href} className="hover:text-black dark:hover:text-white transition-colors">{link.label}</a>
-          ))}
+        <div className="hidden md:flex items-center gap-4">
+          <Button variant="primary" className='w-[140px] h-[36px]'>Registre-se</Button>
+          <Button variant="ghost" className='w-[120px] h-[36px]'>Sign-in</Button>
         </div>
-        <Button variant="primary">
-            Registre-se
-        </Button>
-        <Button variant="ghost">
-            Login
-        </Button>
         <div className="md:hidden">
-            <Dropdown>
-                <DropdownTrigger>
-                    <Button variant="ghost" className="p-2">
-                        <HamburgerMenu />
-                    </Button>
-                </DropdownTrigger>
-                <DropdownContent>
-                    {navLinks.map(link => (
-                        <DropdownItem key={link.href} onClick={() => window.location.href = link.href}>
-                            {link.label}
-                        </DropdownItem>
-                    ))}
-                </DropdownContent>
-            </Dropdown>
+          <Dropdown>
+            <DropdownTrigger>
+              <Button variant="ghost" className="p-2">
+                <HamburgerMenu />
+              </Button>
+            </DropdownTrigger>
+            <DropdownContent>
+              {navLinks.map(link => (
+                <DropdownItem key={link.href} onClick={() => window.location.href = link.href}>
+                  {link.label}
+                </DropdownItem>
+              ))}
+            </DropdownContent>
+          </Dropdown>
         </div>
       </Navbar>
 
@@ -176,10 +179,10 @@ export default function Home() {
         <section className="pt-32 pb-20 px-6 text-center">
             <div className="container mx-auto max-w-4xl space-y-6">
                 <Badge variant="primary" className="mb-4">Desenvolvimento de Software de Ponta a Ponta</Badge>
-                <h1 className="text-9xl md:text-9xl font-bold text-black dark:text-white">
+                <h1 className="text-9xl md:text-9xl font-bold text-foreground">
                     Tehkly
                 </h1>
-                <p className="text-xl md:text-2xl text-gray-600 dark:text-[#656565] max-w-2xl mx-auto">
+                <p className="text-xl md:text-2xl text-secondary max-w-2xl mx-auto">
                     Desenvolvendo o seu futuro.
                 </p>
                 <div className="flex gap-4 justify-center pt-8">
@@ -194,13 +197,17 @@ export default function Home() {
         </section>
 
         {/* Sobre Section */}
-        <section id="sobre" className="py-20 px-6 bg-white/50 dark:bg-white/5">
+        <section id="sobre" className="py-20 px-6 bg-card">
             <div className="container mx-auto max-w-4xl text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-black dark:text-white">
-                Sobre a <span className="text-[#C0FF6B]">Tehkly</span>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">
+                Sobre a <span className="text-primary">Tehkly</span>
             </h2>
-            <p className="text-lg text-gray-700 dark:text-[#656565] leading-relaxed">
-                [Inserir descrição]
+            <p className="text-lg text-secondary leading-relaxed">
+                Somos uma startup de desenvolvimento de software, trabalhamos com soluções inteligentes
+                e inovadoras, com tecnologias poderosas para elevar o nível de nossos produtos.
+            </p>
+            <p className="text-secondary">
+                [Continua]
             </p>
             </div>
         </section>
@@ -208,17 +215,17 @@ export default function Home() {
         {/* Tecnologias Section */}
         <section id="tecnologias" className="py-20 px-6">
             <div className="container mx-auto max-w-6xl text-center">
-                <h2 className="text-4xl md:text-5xl font-bold mb-4 text-black dark:text-white">
-                    <span className="text-[#C0FF6B]">Tecnologias</span> que Utilizamos
+                <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
+                    <span className="text-primary">Tecnologias</span> que Utilizamos
                 </h2>
-                <p className="text-gray-600 dark:text-[#656565] mb-16 text-lg">
+                <p className="text-secondary mb-16 text-lg">
                     Utilizamos as ferramentas mais modernas para construir soluções de alta performance.
                 </p>
                 <div className="flex flex-wrap justify-center">
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                     {technologies.map((tech) => (
                         <Tooltip key={tech.name} content={tech.name}>
-                            <div className="aspect-square bg-gray-200/50 dark:bg-white/5 border border-gray-300 dark:border-[#656565]/20 rounded-2xl flex flex-col items-center justify-center hover:border-[#C0FF6B]/50 hover:shadow-lg hover:shadow-[#C0FF6B]/10 hover:-translate-y-1 transition-all duration-200 cursor-pointer p-4 text-[#C0FF6B]">
+                            <div className="aspect-square bg-card border border-border rounded-2xl flex flex-col items-center justify-center hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-200 cursor-pointer p-4 text-primary">
                                 {tech.icon}
                             </div>
                         </Tooltip>
@@ -229,12 +236,12 @@ export default function Home() {
         </section>
 
         {/* Projetos Section */}
-        <section id="projetos" className="py-20 px-6 bg-white/50 dark:bg-white/5">
+        <section id="projetos" className="py-20 px-6 bg-card">
             <div className="container mx-auto max-w-6xl">
-            <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-black dark:text-white">
-                Nossos <span className="text-[#C0FF6B]">Projetos</span>
+            <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-foreground">
+                Nossos <span className="text-primary">Projetos</span>
             </h2>
-            <p className="text-center text-gray-600 dark:text-[#656565] mb-16 text-lg">
+            <p className="text-center text-secondary mb-16 text-lg">
                 Conheça alguns dos desafios que transformamos em soluções de sucesso.
             </p>
             
@@ -277,19 +284,19 @@ export default function Home() {
         {/* Contato Section */}
         <section id="contato" className="py-20 px-6">
             <div className="container mx-auto max-w-2xl text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-black dark:text-white">
-                Vamos construir algo <span className="text-[#C0FF6B]">incrível</span> juntos?
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
+                Vamos construir algo <span className="text-primary">incrível</span> juntos?
             </h2>
-            <p className="text-gray-600 dark:text-[#656565] mb-12 text-lg">
+            <p className="text-secondary mb-12 text-lg">
                 Preencha o formulário abaixo e vamos conversar sobre seu próximo projeto.
             </p>
             
-            <form onSubmit={handleContactSubmit} className="bg-white/50 dark:bg-white/5 border border-gray-300 dark:border-[#656565]/30 rounded-lg p-8 space-y-6 text-left">
+            <form onSubmit={handleContactSubmit} className="bg-card border border-border rounded-lg p-8 space-y-6 text-left">
                 <Input icon={User} placeholder="Seu nome completo" required />
                 <Input icon={Letter} type="email" placeholder="Seu melhor e-mail" required />
                 <textarea
                     rows={5}
-                    className="w-full bg-transparent border-2 border-[#D5D5D5]/50 dark:border-[#656565] rounded-lg p-4 text-black dark:text-white placeholder:text-[#656565] focus:outline-none focus:ring-2 focus:ring-[#C0FF6B] focus:border-[#C0FF6B] transition-colors duration-200 resize-none"
+                    className="w-full bg-transparent border-2 border-border rounded-lg p-4 text-foreground placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-colors duration-200 resize-none"
                     placeholder="Conte-nos sobre seu projeto..."
                     required
                 />
@@ -301,9 +308,8 @@ export default function Home() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-200 dark:border-[#656565]/20 py-8 px-6">
-        <div className="container mx-auto max-w-6xl text-center text-[#656565]">
+      <footer className="pl-20 border-t border-border py-8 px-6">
+        <div className="container mx-auto max-w-6xl text-center text-secondary">
           <p>&copy; {new Date().getFullYear()} Tehkly. Todos os direitos reservados.</p>
         </div>
       </footer>

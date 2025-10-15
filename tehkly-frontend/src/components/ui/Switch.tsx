@@ -28,8 +28,8 @@ export const Switch = ({ isOn, onToggle }: SwitchProps) => {
         checked={isOn}
         onChange={onToggle}
       />
-      <div className="w-14 h-8 bg-[#D5D5D5] rounded-full peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-offset-2 peer-focus:ring-offset-white dark:peer-focus:ring-offset-black peer-focus:ring-[#C0FF6B] dark:bg-gray-700 peer-checked:bg-[#C0FF6B] transition-colors duration-300 ease-in-out"></div>
-      <div className="absolute top-1 left-1 bg-white border-gray-300 border rounded-full h-6 w-6 shadow-md transition-transform duration-300 ease-in-out transform peer-checked:translate-x-6"></div>
+      <div className="w-14 h-8 bg-border rounded-full peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-offset-2 peer-focus:ring-offset-background peer-focus:ring-ring peer-checked:bg-primary transition-colors duration-300 ease-in-out"></div>
+      <div className="absolute top-1 left-1 bg-background border-border border rounded-full h-6 w-6 shadow-md transition-transform duration-300 ease-in-out transform peer-checked:translate-x-6"></div>
     </label>
   );
 };

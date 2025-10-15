@@ -21,9 +21,9 @@ export const Tooltip = ({ content, children }: TooltipProps) => {
     <div className="relative inline-block group">
       {children}
       <div className="absolute bottom-full mb-2 w-max max-w-xs left-1/2 -translate-x-1/2 invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-200">
-        <div className="bg-black text-white text-sm rounded-md px-3 py-1.5 relative">
+        <div className="bg-foreground text-background text-sm rounded-md px-3 py-1.5 relative">
           {content}
-          <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-black"></div>
+          <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-foreground"></div>
         </div>
       </div>
     </div>

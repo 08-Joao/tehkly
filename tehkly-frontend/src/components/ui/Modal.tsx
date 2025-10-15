@@ -30,11 +30,11 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-white dark:bg-[#111] border-2 border-[#D5D5D5] dark:border-[#656565] w-full max-w-lg m-4 rounded-lg shadow-2xl p-6 relative" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/80 backdrop-blur-sm" onClick={onClose}>
+      <div className="bg-card border-2 border-border w-full max-w-lg m-4 rounded-lg shadow-2xl p-6 relative" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-black dark:text-white">{title}</h2>
-          <button onClick={onClose} className="text-[#656565] dark:text-[#D5D5D5] hover:text-black dark:hover:text-white transition-colors">
+          <h2 className="text-xl font-bold text-foreground">{title}</h2>
+          <button onClick={onClose} className="text-secondary hover:text-foreground transition-colors">
             <IconWrapper icon={CloseSquare} className="h-10 w-10" />
           </button>
         </div>

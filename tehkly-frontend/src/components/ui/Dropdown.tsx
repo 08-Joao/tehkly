@@ -59,7 +59,7 @@ export const DropdownContent = ({ children, align = 'right' }: { children: React
   const animationClasses = isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none';
 
   return (
-    <div className={`absolute ${alignClass} mt-2 w-56 ${originClass} bg-white dark:bg-black border border-[#D5D5D5] dark:border-[#656565] rounded-lg shadow-lg z-10 transition-all duration-200 ease-out transform ${animationClasses}`} role="menu">
+    <div className={`absolute ${alignClass} mt-2 w-56 ${originClass} bg-card border border-border rounded-lg shadow-lg z-10 transition-all duration-200 ease-out transform ${animationClasses}`} role="menu">
       <div className="p-1" onClick={close}>{children}</div>
     </div>
   );
@@ -70,7 +70,7 @@ interface DropdownItemProps {
   onClick?: () => void;
 }
 export const DropdownItem = ({ children, onClick }: DropdownItemProps) => (
-  <button onClick={onClick} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm text-black dark:text-white rounded-md hover:bg-black/5 dark:hover:bg-white/10 transition-colors" role="menuitem">
+  <button onClick={onClick} className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm text-foreground rounded-md hover:bg-foreground/5 transition-colors" role="menuitem">
     {children}
   </button>
 );

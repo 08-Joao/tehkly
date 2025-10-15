@@ -15,5 +15,5 @@ interface SkeletonLoaderProps {
   className?: string;
 }
 export const SkeletonLoader = ({ className = '' }: SkeletonLoaderProps) => {
-  return <div className={`bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse ${className}`}></div>;
+  return <div className={`bg-elevation-2 rounded-lg animate-pulse ${className}`}></div>;
 };
