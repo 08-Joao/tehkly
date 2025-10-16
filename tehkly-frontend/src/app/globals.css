@@ -6,14 +6,14 @@
 
 /* --- TEMA CLARO (Padrão) --- */
 :root {
-  --background: #ffffff;      /* Fundo branco padrão */
+  --background: #e2e2e2;      /* Fundo branco padrão */
   --foreground: #000000;      /* Texto preto */
 
-  --primary: #C0FF6B;          /* Verde lima como cor de destaque */
+  --primary: #69b901;          /* Verde lima como cor de destaque */
   --primary-foreground: #000000; /* Texto preto para contraste com o verde */
   
   --secondary: #656565;        /* Cinza para textos secundários */
-  --border: #D5D5D5;           /* Cinza claro para bordas e divisores */
+  --border: #a1a1a1;           /* Cinza claro para bordas e divisores */
 
   /* Cores para componentes como cards, para se destacarem do fundo */
   --card: #F9F9F9;

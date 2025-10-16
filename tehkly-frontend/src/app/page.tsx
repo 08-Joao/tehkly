@@ -6,22 +6,22 @@ import { Sun, Moon, Magnifer, CheckCircle, ShieldWarning, CloseCircle, AltArrowU
         User, Letter, ArrowRight, HamburgerMenu
 } from '@solar-icons/react'; 
 
-import { MoreVertical, LucideIcon} from 'lucide-react';
+import { LucideIcon} from 'lucide-react';
 import { FaDocker, FaReact, FaNode } from 'react-icons/fa';
-import { SiNextdotjs, SiNestjs, SiTypescript, SiPostgresql, SiN8N, SiKubernetes } from 'react-icons/si';
-import { FaWhatsapp } from 'react-icons/fa6';
+import { SiNextdotjs, SiNestjs, SiTypescript, SiPostgresql, SiN8N, SiKubernetes, SiNeo4J, SiRedis, SiNginx } from 'react-icons/si';
 
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
-import { Card } from '@/components/ui/Card'
-import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/components/ui/Dropdown";
-import { Input } from '@/components/ui/Input'
-import { Modal } from "@/components/ui/Modal"
-import { Navbar } from '@/components/ui/Navbar'
-import { SkeletonLoader } from "@/components/ui/SkeletonLoader"
-import { Switch } from "@/components/ui/Switch"
-import { Toaster } from "@/components/ui/Toaster"
-import { Tooltip } from "@/components/ui/Tooltip"
+import { Button } from '@joao_victor08/tehkly-ui-components'
+import { Badge } from '@joao_victor08/tehkly-ui-components'
+import { Card } from '@joao_victor08/tehkly-ui-components'
+import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from '@joao_victor08/tehkly-ui-components'
+import { Input } from '@joao_victor08/tehkly-ui-components'
+import { Modal } from '@joao_victor08/tehkly-ui-components'
+import { Navbar } from '@joao_victor08/tehkly-ui-components'
+import { SkeletonLoader } from '@joao_victor08/tehkly-ui-components'
+import { Switch } from '@joao_victor08/tehkly-ui-components'
+import { Toaster } from '@joao_victor08/tehkly-ui-components'
+import { Tooltip } from '@joao_victor08/tehkly-ui-components'
+import { LetterOpened, Phone } from '@solar-icons/react/ssr';
 
 // --- Tipos e Helpers Globais ---
 type IconType = LucideIcon;
@@ -38,14 +38,18 @@ type ToasterType = 'success' | 'error' | 'warning';
 
 // --- Dados para a Página ---
 const technologies = [
-  { name: 'Docker', icon: <FaDocker size={60} /> },
-  { name: 'Next.js', icon: <SiNextdotjs size={60} /> },
-  { name: 'NestJS', icon: <SiNestjs size={60} /> },
-  { name: 'React', icon: <FaReact size={60} /> },
-  { name: 'PostgreSQL', icon: <SiPostgresql size={60} /> },
-  { name: 'TypeScript', icon: <SiTypescript size={60} /> },
-  { name: 'Node.js', icon: <FaNode size={60} /> },
-  { name: 'n8n', icon: <SiN8N size={60} /> }
+  { name: 'Docker', icon: <FaDocker size={50} /> },
+  { name: 'Next.js', icon: <SiNextdotjs size={50} /> },
+  { name: 'NestJS', icon: <SiNestjs size={50} /> },
+  { name: 'React', icon: <FaReact size={50} /> },
+  { name: 'PostgreSQL', icon: <SiPostgresql size={50} /> },
+  { name: 'TypeScript', icon: <SiTypescript size={50} /> },
+  { name: 'Node.js', icon: <FaNode size={50} /> },
+  { name: 'Kubernetes', icon: <SiKubernetes size={50} /> },
+  { name: 'Neo4j', icon: <SiNeo4J size={50} /> },
+  { name: 'Redis', icon: <SiRedis size={50} /> },
+  { name: 'Nginx', icon: <SiNginx size={50} /> },
+  { name: 'n8n', icon: <SiN8N size={50} /> }
 ];
 
 const projects = [
@@ -120,7 +124,7 @@ export default function Home() {
   const navLinks = [
     { href: '#sobre', label: 'Sobre' },
     { href: '#tecnologias', label: 'Tecnologias' },
-    { href: '#projetos', label: 'Projetos' },
+    { href: '#servicos', label: 'Serviços' },
     { href: '#contato', label: 'Contato' },
   ];
 
@@ -145,9 +149,9 @@ export default function Home() {
         isDarkMode={isDarkMode}
         onThemeToggle={handleThemeToggle}
         centerContent={
-          <div className="flex items-center gap-5 text-sm font-medium text-secondary">
+          <div className="flex items-center gap-5 text-xl font-medium text-secondary">
             {navLinks.map(link => (
-              <a key={link.href} href={link.href} className="hover:text-foreground transition-colors">{link.label}</a>
+              <a key={link.href} href={link.href} className="hover:text-foreground p-4 transition-colors">{link.label}</a>
             ))}
           </div>
         }
@@ -176,7 +180,7 @@ export default function Home() {
 
       <main>
         {/* Hero Section */}
-        <section className="pt-32 pb-20 px-6 text-center">
+        <section className="pt-22 pb-20 px-6 text-center">
             <div className="container mx-auto max-w-4xl space-y-6">
                 <Badge variant="primary" className="mb-4">Desenvolvimento de Software de Ponta a Ponta</Badge>
                 <h1 className="text-9xl md:text-9xl font-bold text-foreground">
@@ -186,8 +190,8 @@ export default function Home() {
                     Desenvolvendo o seu futuro.
                 </p>
                 <div className="flex gap-4 justify-center pt-8">
-                    <Button variant="primary" onClick={() => window.location.href = '#projetos'}>
-                        Ver Projetos
+                    <Button variant="primary" onClick={() => window.location.href = '#servicos'}>
+                        Ver Serviços
                     </Button>
                     <Button variant="ghost" onClick={() => window.location.href = '#contato'}>
                         Entre em Contato
@@ -203,11 +207,13 @@ export default function Home() {
                 Sobre a <span className="text-primary">Tehkly</span>
             </h2>
             <p className="text-lg text-secondary leading-relaxed">
-                Somos uma startup de desenvolvimento de software, trabalhamos com soluções inteligentes
-                e inovadoras, com tecnologias poderosas para elevar o nível de nossos produtos.
+                Somos uma startup especializada no desenvolvimento de soluções tecnológicas inteligentes e inovadoras. Nosso propósito é transformar ideias em produtos digitais robustos, escaláveis e de alto desempenho, utilizando tecnologias avançadas e práticas modernas de engenharia de software para elevar continuamente o padrão de qualidade dos nossos projetos.
             </p>
-            <p className="text-secondary">
-                [Continua]
+            <p className="mt-5 text-lg text-secondary leading-relaxed">
+                Acompanhamos de perto as principais tendências do mercado e as adaptamos de forma estratégica para maximizar eficiência, competitividade e impacto. Atuamos em parceria com profissionais e empresas que compartilham nossa visão de excelência, o que nos permite entregar soluções completas e bem estruturadas.
+            </p>
+            <p className='mt-5 text-lg text-secondary leading relaxed'>
+                Nosso compromisso é oferecer produtos e serviços que impulsionem negócios, acelerem processos e gerem valor real, sempre com foco em qualidade, inovação e profissionalismo.
             </p>
             </div>
         </section>
@@ -219,10 +225,10 @@ export default function Home() {
                     <span className="text-primary">Tecnologias</span> que Utilizamos
                 </h2>
                 <p className="text-secondary mb-16 text-lg">
-                    Utilizamos as ferramentas mais modernas para construir soluções de alta performance.
+                    Algumas das ferramentas e frameworks que utilizamos em nossos trabalhos.
                 </p>
                 <div className="flex flex-wrap justify-center">
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
                     {technologies.map((tech) => (
                         <Tooltip key={tech.name} content={tech.name}>
                             <div className="aspect-square bg-card border border-border rounded-2xl flex flex-col items-center justify-center hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-200 cursor-pointer p-4 text-primary">
@@ -236,74 +242,143 @@ export default function Home() {
         </section>
 
         {/* Projetos Section */}
-        <section id="projetos" className="py-20 px-6 bg-card">
+        <section id="servicos" className="py-20 px-6 bg-card">
             <div className="container mx-auto max-w-6xl">
             <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-foreground">
-                Nossos <span className="text-primary">Projetos</span>
+                Nossos <span className="text-primary">Serviços</span>
             </h2>
             <p className="text-center text-secondary mb-16 text-lg">
-                Conheça alguns dos desafios que transformamos em soluções de sucesso.
+                Alcançamos várias áreas da tecnologia trabalhando em uma vasta gama de serviços.
             </p>
             
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {isLoadingProjects ? (
-                    Array.from({ length: 3 }).map((_, index) => (
-                        <div key={index} className="flex flex-col gap-4">
-                            <SkeletonLoader className="aspect-video w-full rounded-lg" />
-                            <SkeletonLoader className="h-6 w-3/4 rounded-lg" />
-                            <SkeletonLoader className="h-12 w-full rounded-lg" />
-                            <SkeletonLoader className="h-10 w-1/3 rounded-lg" />
-                        </div>
-                    ))
-                ) : (
-                    projects.map((project) => (
-                        <Card
-                            key={project.id}
-                            title={project.title}
-                            description={project.description}
-                            imagePlaceholder={true}
-                            action={
-                                <div className="flex flex-col sm:flex-row gap-3">
-                                    <Button variant="primary" onClick={() => openProjectModal(project)}>
-                                        Ver Detalhes
-                                    </Button>
-                                    <div className="flex gap-2 flex-wrap items-center">
-                                        {project.tags.slice(0, 2).map(tag => (
-                                            <Badge key={tag} variant="neutral">{tag}</Badge>
-                                        ))}
-                                    </div>
-                                </div>
-                            }
-                        />
-                    ))
-                )}
-            </div>
+            
             </div>
         </section>
 
         {/* Contato Section */}
-        <section id="contato" className="py-20 px-6">
-            <div className="container mx-auto max-w-2xl text-center">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-                Vamos construir algo <span className="text-primary">incrível</span> juntos?
-            </h2>
-            <p className="text-secondary mb-12 text-lg">
-                Preencha o formulário abaixo e vamos conversar sobre seu próximo projeto.
-            </p>
-            
-            <form onSubmit={handleContactSubmit} className="bg-card border border-border rounded-lg p-8 space-y-6 text-left">
-                <Input icon={User} placeholder="Seu nome completo" required />
-                <Input icon={Letter} type="email" placeholder="Seu melhor e-mail" required />
-                <textarea
-                    rows={5}
-                    className="w-full bg-transparent border-2 border-border rounded-lg p-4 text-foreground placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring transition-colors duration-200 resize-none"
-                    placeholder="Conte-nos sobre seu projeto..."
-                    required
-                />
-                <Button type="submit" variant="primary" className="w-full" icon={ArrowRight} iconPosition="right">
-                    Enviar Mensagem
-                </Button>
-            </form>
+        <section id="contato" className="py-20 px-6 bg-background">
+            <div className="container mx-auto max-w-6xl">
+                {/* Header da Seção */}
+                <div className="text-center mb-16">
+                    <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
+                        Vamos <span className="text-primary">Conversar</span>?
+                    </h2>
+                    <p className="text-secondary text-lg max-w-2xl mx-auto">
+                        Transforme suas ideias em realidade. Nossa equipe está pronta para discutir seu próximo projeto.
+                    </p>
+                </div>
+
+                <div className="grid lg:grid-cols-3 gap-8">
+                    {/* Coluna Esquerda - Cards de Contato */}
+                    <div className="lg:col-span-1 space-y-4">
+                        <div className="bg-card border border-border rounded-lg p-6 hover:border-primary transition-colors duration-300">
+                            <div className="flex items-start gap-4">
+                                <Phone size={28} weight='LineDuotone' className="flex-shrink-0 mt-1"/>
+                                <div>
+                                    <h3 className="text-foreground font-semibold mb-2">Telefone</h3>
+                                    <p className="text-secondary text-sm">+55 (31) 97568-2079</p>
+                                    <p className="text-secondary text-sm">+55 (31) 99606-6511</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-card border border-border rounded-lg p-6 hover:border-primary transition-colors duration-300">
+                            <div className="flex items-start gap-4">
+                                <Letter size={28} weight='LineDuotone' className="flex-shrink-0 mt-1"/>
+                                <div>
+                                    <h3 className="text-foreground font-semibold mb-2">E-mail</h3>
+                                    <p className="text-secondary text-sm break-all">contato@tehkly.com</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-primary/5 border border-primary/20 rounded-lg p-6 mt-6">
+                            <p className="text-foreground text-sm leading-relaxed">
+                                <span className="font-semibold">Horário de Atendimento:</span><br/>
+                                Segunda a Sexta: 9h às 18h<br/>
+                                Respondemos em até 24h úteis
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Coluna Direita - Formulário */}
+                    <div className="lg:col-span-2">
+                        <div className="bg-card border border-border rounded-lg p-8">
+                            <h3 className="text-2xl font-bold text-foreground mb-2">
+                                Solicite uma Proposta
+                            </h3>
+                            <p className="text-secondary mb-8">
+                                Preencha os campos abaixo com suas informações e detalhes do projeto
+                            </p>
+
+                            <form onSubmit={handleContactSubmit} className="space-y-6">
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="block text-sm font-medium text-foreground">
+                                            Nome Completo *
+                                        </label>
+                                        <Input icon={User} placeholder="Digite seu nome" required />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="block text-sm font-medium text-foreground">
+                                            E-mail *
+                                        </label>
+                                        <Input icon={Letter} type="email" placeholder="seu@email.com" required />
+                                    </div>
+                                </div>
+
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="block text-sm font-medium text-foreground">
+                                            Telefone
+                                        </label>
+                                        <Input icon={Phone} placeholder="(00) 00000-0000" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="block text-sm font-medium text-foreground">
+                                            Empresa/Organização
+                                        </label>
+                                        <Input placeholder="Nome da empresa" />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="block text-sm font-medium text-foreground">
+                                        Sobre o Projeto *
+                                    </label>
+                                    <textarea
+                                        rows={6}
+                                        className="w-full bg-background border border-border rounded-lg p-4 text-foreground placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none"
+                                        placeholder="Descreva seu projeto, objetivos e prazos desejados..."
+                                        required
+                                    />
+                                </div>
+
+                                <div className="flex items-start gap-3">
+                                    <input 
+                                        type="checkbox" 
+                                        id="terms" 
+                                        className="mt-1 w-4 h-4 accent-primary"
+                                        required 
+                                    />
+                                    <label htmlFor="terms" className="text-sm text-secondary">
+                                        Concordo em compartilhar essas informações e autorizo o contato da equipe Tehkly
+                                    </label>
+                                </div>
+
+                                <Button 
+                                    type="submit" 
+                                    variant="primary" 
+                                    className="w-full md:w-auto px-8" 
+                                    icon={ArrowRight} 
+                                    iconPosition="right"
+                                >
+                                    Enviar Solicitação
+                                </Button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
       </main>

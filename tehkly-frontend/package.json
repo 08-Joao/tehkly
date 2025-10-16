@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@joao_victor08/tehkly-ui-components": "^1.0.0",
     "@solar-icons/react": "^1.0.1",
     "lucide-react": "^0.545.0",
     "next": "15.5.4",
