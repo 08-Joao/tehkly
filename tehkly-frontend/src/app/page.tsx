@@ -244,7 +244,7 @@ export default function Home() {
                         </div>
                         <h3 className="text-xl font-bold text-foreground">Desenvolvimento Web</h3>
                     </div>
-                    <p className="text-secondary flex-grow text-center">Criamos websites e aplicações web modernas, responsivas e otimizadas para performance.</p>
+                    <p className="text-secondary flex-grow grid place-items-center text-center">Criamos websites e aplicações web modernas, responsivas e otimizadas para performance.</p>
                 </div>
 
                 <div className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-xl hover:shadow-primary/5 dark:hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 group flex flex-col h-[280px]">
@@ -254,7 +254,7 @@ export default function Home() {
                         </div>
                         <h3 className="text-xl font-bold text-foreground">Sistemas em Nuvem</h3>
                     </div>
-                    <p className="text-secondary flex-grow text-center">Infraestrutura escalável e segura usando as principais plataformas cloud do mercado.</p>
+                    <p className="text-secondary flex-grow grid place-items-center text-center">Infraestrutura escalável e segura usando as principais plataformas cloud do mercado.</p>
                 </div>
 
                 <div className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-xl hover:shadow-primary/5 dark:hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 group flex flex-col h-[280px]">
@@ -264,7 +264,7 @@ export default function Home() {
                         </div>
                         <h3 className="text-xl font-bold text-foreground">Automação de Sistemas</h3>
                     </div>
-                    <p className="text-secondary flex-grow text-center">Automatizamos processos repetitivos para aumentar produtividade e reduzir custos.</p>
+                    <p className="text-secondary flex-grow grid place-items-center text-center">Automatizamos processos repetitivos para aumentar produtividade e reduzir custos.</p>
                 </div>
 
                 <div className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-xl hover:shadow-primary/5 dark:hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 group flex flex-col h-[280px]">
@@ -274,7 +274,7 @@ export default function Home() {
                         </div>
                         <h3 className="text-xl font-bold text-foreground">Aplicações Mobile</h3>
                     </div>
-                    <p className="text-secondary flex-grow text-center">Desenvolvemos apps nativos e híbridos para iOS e Android com excelente UX.</p>
+                    <p className="text-secondary flex-grow grid place-items-center text-center">Desenvolvemos apps nativos e híbridos para iOS e Android com excelente UX.</p>
                 </div>
             </div>
           </div>
