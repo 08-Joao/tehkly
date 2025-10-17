@@ -1,42 +1,26 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-
 import { Sun, Moon, Magnifer, CheckCircle, ShieldWarning, CloseCircle, AltArrowUp, 
-        User, Letter, ArrowRight, HamburgerMenu
+        User, Letter, ArrowRight, HamburgerMenu, Programming, Cloud, ServerMinimalistic, Smartphone
 } from '@solar-icons/react'; 
-
-import { LucideIcon} from 'lucide-react';
 import { FaDocker, FaReact, FaNode } from 'react-icons/fa';
 import { SiNextdotjs, SiNestjs, SiTypescript, SiPostgresql, SiN8N, SiKubernetes, SiNeo4J, SiRedis, SiNginx } from 'react-icons/si';
-
-import { Button } from '@joao_victor08/tehkly-ui-components'
-import { Badge } from '@joao_victor08/tehkly-ui-components'
-import { Card } from '@joao_victor08/tehkly-ui-components'
-import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from '@joao_victor08/tehkly-ui-components'
-import { Input } from '@joao_victor08/tehkly-ui-components'
-import { Modal } from '@joao_victor08/tehkly-ui-components'
-import { Navbar } from '@joao_victor08/tehkly-ui-components'
-import { SkeletonLoader } from '@joao_victor08/tehkly-ui-components'
-import { Switch } from '@joao_victor08/tehkly-ui-components'
-import { Toaster } from '@joao_victor08/tehkly-ui-components'
-import { Tooltip } from '@joao_victor08/tehkly-ui-components'
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/Card';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Navbar } from '@/components/ui/Navbar';
+import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
+import { Toaster } from "@/components/ui/Toaster";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { LetterOpened, Phone } from '@solar-icons/react/ssr';
-
-// --- Tipos e Helpers Globais ---
-type IconType = LucideIcon;
-
-interface IconWrapperProps {
-  icon: IconType;
-  className?: string;
-}
-const IconWrapper = ({ icon: Icon, className = '' }: IconWrapperProps) => (
-  <Icon className={`inline-block h-5 w-5 ${className}`} />
-);
 
 type ToasterType = 'success' | 'error' | 'warning';
 
-// --- Dados para a Página ---
 const technologies = [
   { name: 'Docker', icon: <FaDocker size={50} /> },
   { name: 'Next.js', icon: <SiNextdotjs size={50} /> },
@@ -78,33 +62,29 @@ const projects = [
 
 type Project = typeof projects[0];
 
-// --- Componente Principal da Página ---
 export default function Home() {
-  // ============================================
-  // ESTADOS DO COMPONENTE
-  // ============================================
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [toaster, setToaster] = useState<{ show: boolean; message: string; type: ToasterType } | null>(null);
   const [isLoadingProjects, setIsLoadingProjects] = useState(true);
   
-  // Efeito para o modo escuro
   useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove(isDarkMode ? 'light' : 'dark');
-    root.classList.add(isDarkMode ? 'dark' : 'light');
+    if (isDarkMode) {
+      root.classList.remove('light');
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+      root.classList.add('light');
+    }
   }, [isDarkMode]);
 
-  // Efeito para simular carregamento dos projetos
   useEffect(() => {
     const timer = setTimeout(() => setIsLoadingProjects(false), 1500);
     return () => clearTimeout(timer);
   }, []);
 
-  // ============================================
-  // HANDLERS DE EVENTOS
-  // ============================================
   const handleThemeToggle = () => setIsDarkMode(!isDarkMode);
 
   const openProjectModal = (project: Project) => {
@@ -114,8 +94,7 @@ export default function Home() {
   
   const closeProjectModal = () => setIsModalOpen(false);
 
-  const handleContactSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleContactSubmit = () => {
     setToaster({ show: true, message: 'Mensagem enviada com sucesso!', type: 'success' });
   };
   
@@ -130,21 +109,24 @@ export default function Home() {
 
   return (
     <div>
-
       {toaster?.show && (
         <Toaster message={toaster.message} type={toaster.type as ToasterType} onClose={closeToaster} />
       )}
       
-      <Modal isOpen={isModalOpen} onClose={closeProjectModal} title={selectedProject?.title ?? ''}>
-        <p className="text-secondary mb-4">{selectedProject?.fullDescription}</p>
-        <div className="flex gap-2 flex-wrap">
-          {selectedProject?.tags.map(tag => (
-            <Badge key={tag} variant="secondary">{tag}</Badge>
-          ))}
-        </div>
-      </Modal>
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{selectedProject?.title ?? ''}</DialogTitle>
+          </DialogHeader>
+          <p className="text-secondary mb-4">{selectedProject?.fullDescription}</p>
+          <div className="flex gap-2 flex-wrap">
+            {selectedProject?.tags.map(tag => (
+              <Badge key={tag} variant="secondary">{tag}</Badge>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
 
-      {/* Usando o componente Navbar no lugar do <nav> antigo */}
       <Navbar
         isDarkMode={isDarkMode}
         onThemeToggle={handleThemeToggle}
@@ -157,32 +139,31 @@ export default function Home() {
         }
       >
         <div className="hidden md:flex items-center gap-4">
-          <Button variant="primary" className='w-[140px] h-[36px]'>Registre-se</Button>
-          <Button variant="ghost" className='w-[120px] h-[36px]'>Sign-in</Button>
+          <Button variant="default" className='w-[140px] h-[36px]'>Registre-se</Button>
+          <Button variant="secondary" className='w-[120px] h-[36px]'>Sign-in</Button>
         </div>
         <div className="md:hidden">
-          <Dropdown>
-            <DropdownTrigger>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="p-2">
                 <HamburgerMenu />
               </Button>
-            </DropdownTrigger>
-            <DropdownContent>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
               {navLinks.map(link => (
-                <DropdownItem key={link.href} onClick={() => window.location.href = link.href}>
+                <DropdownMenuItem key={link.href} onClick={() => window.location.href = link.href}>
                   {link.label}
-                </DropdownItem>
+                </DropdownMenuItem>
               ))}
-            </DropdownContent>
-          </Dropdown>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </Navbar>
 
       <main>
-        {/* Hero Section */}
         <section className="pt-22 pb-20 px-6 text-center">
             <div className="container mx-auto max-w-4xl space-y-6">
-                <Badge variant="primary" className="mb-4">Desenvolvimento de Software de Ponta a Ponta</Badge>
+                <Badge variant="default" className="mb-4">Desenvolvimento de Software de Ponta a Ponta</Badge>
                 <h1 className="text-9xl md:text-9xl font-bold text-foreground">
                     Tehkly
                 </h1>
@@ -190,17 +171,16 @@ export default function Home() {
                     Desenvolvendo o seu futuro.
                 </p>
                 <div className="flex gap-4 justify-center pt-8">
-                    <Button variant="primary" onClick={() => window.location.href = '#servicos'}>
+                    <Button variant="default" onClick={() => window.location.href = '#servicos'}>
                         Ver Serviços
                     </Button>
-                    <Button variant="ghost" onClick={() => window.location.href = '#contato'}>
+                    <Button variant="secondary" onClick={() => window.location.href = '#contato'}>
                         Entre em Contato
                     </Button>
                 </div>
             </div>
         </section>
 
-        {/* Sobre Section */}
         <section id="sobre" className="py-20 px-6 bg-card">
             <div className="container mx-auto max-w-4xl text-center">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">
@@ -212,13 +192,12 @@ export default function Home() {
             <p className="mt-5 text-lg text-secondary leading-relaxed">
                 Acompanhamos de perto as principais tendências do mercado e as adaptamos de forma estratégica para maximizar eficiência, competitividade e impacto. Atuamos em parceria com profissionais e empresas que compartilham nossa visão de excelência, o que nos permite entregar soluções completas e bem estruturadas.
             </p>
-            <p className='mt-5 text-lg text-secondary leading relaxed'>
+            <p className='mt-5 text-lg text-secondary leading-relaxed'>
                 Nosso compromisso é oferecer produtos e serviços que impulsionem negócios, acelerem processos e gerem valor real, sempre com foco em qualidade, inovação e profissionalismo.
             </p>
             </div>
         </section>
 
-        {/* Tecnologias Section */}
         <section id="tecnologias" className="py-20 px-6">
             <div className="container mx-auto max-w-6xl text-center">
                 <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
@@ -229,55 +208,101 @@ export default function Home() {
                 </p>
                 <div className="flex flex-wrap justify-center">
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
-                    {technologies.map((tech) => (
-                        <Tooltip key={tech.name} content={tech.name}>
+                    <TooltipProvider>
+                      {technologies.map((tech) => (
+                        <Tooltip key={tech.name}>
+                          <TooltipTrigger asChild>
                             <div className="aspect-square bg-card border border-border rounded-2xl flex flex-col items-center justify-center hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-200 cursor-pointer p-4 text-primary">
                                 {tech.icon}
                             </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{tech.name}</p>
+                          </TooltipContent>
                         </Tooltip>
-                    ))}
+                      ))}
+                    </TooltipProvider>
                     </div>
                 </div> 
             </div>
         </section>
 
-        {/* Projetos Section */}
         <section id="servicos" className="py-20 px-6 bg-card">
-            <div className="container mx-auto max-w-6xl">
+          <div className="container mx-auto max-w-6xl ">
             <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-foreground">
                 Nossos <span className="text-primary">Serviços</span>
             </h2>
             <p className="text-center text-secondary mb-16 text-lg">
                 Alcançamos várias áreas da tecnologia trabalhando em uma vasta gama de serviços.
             </p>
-            
-            
+
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto'>
+                <div className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-xl hover:shadow-primary/5 dark:hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 group flex flex-col h-[280px]">
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="p-3 bg-primary/10 rounded-lg">
+                            <Programming size={32} className="text-primary" />
+                        </div>
+                        <h3 className="text-xl font-bold text-foreground">Desenvolvimento Web</h3>
+                    </div>
+                    <p className="text-secondary flex-grow text-center">Criamos websites e aplicações web modernas, responsivas e otimizadas para performance.</p>
+                </div>
+
+                <div className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-xl hover:shadow-primary/5 dark:hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 group flex flex-col h-[280px]">
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="p-3 bg-primary/10 rounded-lg">
+                            <Cloud size={32} className="text-primary" />
+                        </div>
+                        <h3 className="text-xl font-bold text-foreground">Sistemas em Nuvem</h3>
+                    </div>
+                    <p className="text-secondary flex-grow text-center">Infraestrutura escalável e segura usando as principais plataformas cloud do mercado.</p>
+                </div>
+
+                <div className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-xl hover:shadow-primary/5 dark:hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 group flex flex-col h-[280px]">
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="p-3 bg-primary/10 rounded-lg">
+                            <ServerMinimalistic size={32} className="text-primary" />
+                        </div>
+                        <h3 className="text-xl font-bold text-foreground">Automação de Sistemas</h3>
+                    </div>
+                    <p className="text-secondary flex-grow text-center">Automatizamos processos repetitivos para aumentar produtividade e reduzir custos.</p>
+                </div>
+
+                <div className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-xl hover:shadow-primary/5 dark:hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 group flex flex-col h-[280px]">
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="p-3 bg-primary/10 rounded-lg">
+                            <Smartphone size={32} className="text-primary" />
+                        </div>
+                        <h3 className="text-xl font-bold text-foreground">Aplicações Mobile</h3>
+                    </div>
+                    <p className="text-secondary flex-grow text-center">Desenvolvemos apps nativos e híbridos para iOS e Android com excelente UX.</p>
+                </div>
             </div>
+          </div>
         </section>
 
-        {/* Contato Section */}
         <section id="contato" className="py-20 px-6 bg-background">
             <div className="container mx-auto max-w-6xl">
-                {/* Header da Seção */}
                 <div className="text-center mb-16">
-                    <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
-                        Vamos <span className="text-primary">Conversar</span>?
+                    <h2 className="text-4xl md:text-4xl font-bold mb-4 text-foreground">
+                        Não encontrou o serviço que procurava?
+                    </h2>
+                    <h2 className="text-4xl md:text-6xl font-bold mb-4 text-foreground">
+                        <span className="text-primary">Nós</span> temos a <span className='text-primary'>solução</span>!
                     </h2>
                     <p className="text-secondary text-lg max-w-2xl mx-auto">
-                        Transforme suas ideias em realidade. Nossa equipe está pronta para discutir seu próximo projeto.
+                        A Tehkly desenvolve sistemas personalizados, transformando suas ideias em realidade. Nossa equipe está pronta para discutir seu próximo projeto!
                     </p>
                 </div>
 
                 <div className="grid lg:grid-cols-3 gap-8">
-                    {/* Coluna Esquerda - Cards de Contato */}
                     <div className="lg:col-span-1 space-y-4">
                         <div className="bg-card border border-border rounded-lg p-6 hover:border-primary transition-colors duration-300">
                             <div className="flex items-start gap-4">
                                 <Phone size={28} weight='LineDuotone' className="flex-shrink-0 mt-1"/>
                                 <div>
                                     <h3 className="text-foreground font-semibold mb-2">Telefone</h3>
-                                    <p className="text-secondary text-sm">+55 (31) 97568-2079</p>
-                                    <p className="text-secondary text-sm">+55 (31) 99606-6511</p>
+                                    <p className="text-secondary text-sm">+55 (31) 99606-6511 - João Victor</p>
+                                    <p className="text-secondary text-sm">+55 (31) 97568-2079 - Felipe Fialho</p>
                                 </div>
                             </div>
                         </div>
@@ -301,7 +326,6 @@ export default function Home() {
                         </div>
                     </div>
 
-                    {/* Coluna Direita - Formulário */}
                     <div className="lg:col-span-2">
                         <div className="bg-card border border-border rounded-lg p-8">
                             <h3 className="text-2xl font-bold text-foreground mb-2">
@@ -311,19 +335,19 @@ export default function Home() {
                                 Preencha os campos abaixo com suas informações e detalhes do projeto
                             </p>
 
-                            <form onSubmit={handleContactSubmit} className="space-y-6">
+                            <div className="space-y-6">
                                 <div className="grid md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label className="block text-sm font-medium text-foreground">
                                             Nome Completo *
                                         </label>
-                                        <Input icon={User} placeholder="Digite seu nome" required />
+                                        <Input placeholder="Digite seu nome" required />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="block text-sm font-medium text-foreground">
                                             E-mail *
                                         </label>
-                                        <Input icon={Letter} type="email" placeholder="seu@email.com" required />
+                                        <Input type="email" placeholder="seu@email.com" required />
                                     </div>
                                 </div>
 
@@ -332,7 +356,7 @@ export default function Home() {
                                         <label className="block text-sm font-medium text-foreground">
                                             Telefone
                                         </label>
-                                        <Input icon={Phone} placeholder="(00) 00000-0000" />
+                                        <Input placeholder="(00) 00000-0000" />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="block text-sm font-medium text-foreground">
@@ -368,14 +392,14 @@ export default function Home() {
 
                                 <Button 
                                     type="submit" 
-                                    variant="primary" 
-                                    className="w-full md:w-auto px-8" 
-                                    icon={ArrowRight} 
-                                    iconPosition="right"
+                                    variant="default" 
+                                    className="w-full md:w-auto px-8"
+                                    onClick={handleContactSubmit}
                                 >
                                     Enviar Solicitação
+                                    <ArrowRight className="ml-2 h-4 w-4" />
                                 </Button>
-                            </form>
+                            </div>
                         </div>
                     </div>
                 </div>
