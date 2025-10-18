@@ -1,147 +1,249 @@
 @import "tailwindcss";
+/* @import "tw-animate-css"; */
 
-/* ============================================ */
-/* VARIÁVEIS DE COR E TEMAS                     */
-/* ============================================ */
+@custom-variant dark (&:is(.dark *));
 
-/* --- TEMA CLARO (Padrão) --- */
-:root {
-  --background: #e2e2e2;      /* Fundo branco padrão */
-  --foreground: #000000;      /* Texto preto */
-
-  --primary: #69b901;          /* Verde lima como cor de destaque */
-  --primary-foreground: #000000; /* Texto preto para contraste com o verde */
-  
-  --secondary: #656565;        /* Cinza para textos secundários */
-  --border: #a1a1a1;           /* Cinza claro para bordas e divisores */
-
-  /* Cores para componentes como cards, para se destacarem do fundo */
-  --card: #F9F9F9;
-  --card-foreground: #000000;
-  
-  --ring: #C0FF6B;             /* Cor do anel de foco */
-
-  /* Elevações (tons de fundo com profundidade crescente) */
-  --elevation-1: #F3F3F3; /* leve diferença para se destacar */
-  --elevation-2: #ECECEC;
-  --elevation-3: #E6E6E6;
-
-  /* Sombras suaves de elevação */
-  --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-2: 0 2px 6px rgba(0, 0, 0, 0.10);
-  --shadow-3: 0 4px 12px rgba(0, 0, 0, 0.12);
-}
-
-/* --- TEMA ESCURO --- */
-.dark {
-  --background: #000000;
-  --foreground: #D5D5D5;
-
-  --primary: #C0FF6B;
-  --primary-foreground: #000000;
-
-  --secondary: #909090; /* um pouco mais claro no dark */
-  --border: #303030;
-
-  --card: #1A1A1A;
-  --card-foreground: #D5D5D5;
-
-  --ring: #C0FF6B;
-
-  /* Elevações no dark theme (clareando levemente o fundo para cada nível) */
-  --elevation-1: #141414;
-  --elevation-2: #1E1E1E;
-  --elevation-3: #2A2A2A;
-
-  /* Sombras invertidas mais suaves (simulando luz difusa) */
-  --shadow-1: 0 1px 3px rgba(255, 255, 255, 0.04);
-  --shadow-2: 0 2px 6px rgba(255, 255, 255, 0.06);
-  --shadow-3: 0 4px 12px rgba(255, 255, 255, 0.08);
-}
-
-/* --- Mapeamento para o sistema de temas --- */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-elevation-1: var(--elevation-1);
+  --color-elevation-2: var(--elevation-2);
+  --color-text: var(--text);
+  --color-text-inverted: var(--text-inverted);
+  
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-tertiary: var(--tertiary);
+  --color-tertiary-foreground: var(--tertiary-foreground);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-error: var(--error);
+  --color-error-foreground: var(--error-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
+  --color-card: var(--elevation-1);
+  --color-card-foreground: var(--foreground);
+  --color-popover: var(--elevation-2);
+  --color-popover-foreground: var(--foreground);
+  --color-muted: var(--tertiary);
+  --color-muted-foreground: var(--tertiary-foreground);
+  --color-destructive: var(--error);
+  --color-destructive-foreground: var(--error-foreground);
+
   --color-border: var(--border);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
+  --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* Elevação e sombra */
-  --color-elevation-1: var(--elevation-1);
-  --color-elevation-2: var(--elevation-2);
-  --color-elevation-3: var(--elevation-3);
-  --shadow-elevation-1: var(--shadow-1);
-  --shadow-elevation-2: var(--shadow-2);
-  --shadow-elevation-3: var(--shadow-3);
+  --color-sidebar: var(--elevation-1);
+  --color-sidebar-foreground: var(--foreground);
+  --color-sidebar-primary: var(--primary);
+  --color-sidebar-primary-foreground: var(--primary-foreground);
+  --color-sidebar-accent: var(--accent);
+  --color-sidebar-accent-foreground: var(--accent-foreground);
+  --color-sidebar-border: var(--border);
+  --color-sidebar-ring: var(--ring);
 
-  /* Fontes */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.75rem;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-/* --- Tema automático via sistema --- */
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    --background: #000000;
-    --foreground: #D5D5D5;
-    --primary: #C0FF6B;
-    --primary-foreground: #000000;
-    --secondary: #909090;
-    --border: #303030;
-    --card: #1A1A1A;
-    --card-foreground: #D5D5D5;
-    --ring: #C0FF6B;
-    --elevation-1: #141414;
-    --elevation-2: #1E1E1E;
-    --elevation-3: #2A2A2A;
-  }
+
+/* Tema LIGHT */
+.light {
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+
+  /* Cores de destaque e texto */
+  --text: #4a4a4a;
+  --text-inverted: #ffffff;
+
+  /* Camadas visuais */
+  --elevation-1: #f6f6f6;
+  --elevation-2: #ededed;
+
+  /* Cores principais */
+  --primary: #69b3fd; /* Azul vibrante */
+  --primary-foreground: #ffffff;
+
+  --secondary: #26A69A; /* Teal vibrante */
+  --secondary-foreground: #1a1a1a;
+
+  /* Acentos sutis derivados */
+  --accent: #7B1FA2; /* Roxo vibrante */
+  --accent-foreground: #ffffff;
+
+  /* Estados */
+  --success: #388E3C; /* Verde escuro */
+  --success-foreground: #ffffff;
+
+  --error: #D81B60; /* Rosa magenta */
+  --error-foreground: #ffffff;
+
+  --warning: #512DA8; /* Roxo escuro */
+  --warning-foreground: #ffffff;
+
+  --info: #0288D1; /* Azul claro */
+  --info-foreground: #ffffff;
+
+  /* Bordas, inputs, anéis */
+  --border: #d1d1d1;
+  --input: #e8e8e8;
+  --ring: #1976D2;
+
+  /* Complementares */
+  --muted: #e0e0e0;
+  --muted-foreground: #4a4a4a;
+
+  /* Componentes */
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+  --destructive: #D81B60;
+  --destructive-foreground: #ffffff;
+
+  /* Sidebar */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #4a4a4a;
+  --sidebar-primary: #1976D2;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #26A69A;
+  --sidebar-accent-foreground: #1a1a1a;
+  --sidebar-border: #d1d1d1;
+  --sidebar-ring: #1976D2;
+
+  /* Charts (tons derivados da paleta) */
+  --chart-1: #1976D2; /* Azul vibrante */
+  --chart-2: #26A69A; /* Teal vibrante */
+  --chart-3: #7B1FA2; /* Roxo vibrante */
+  --chart-4: #388E3C; /* Verde escuro */
+  --chart-5: #0288D1; /* Azul claro */
 }
 
-/* ============================================ */
-/* ESTILOS GLOBAIS                              */
-/* ============================================ */
+/* Tema DARK - versão inversa do light */
+.dark {
+  --background: #1a1a1a;
+  --foreground: #ffffff;
+
+  /* Cores de destaque e texto */
+  --text: #b0b0b0;
+  --text-inverted: #1a1a1a;
+
+  /* Camadas visuais - tons escuros */
+  --elevation-1: #252525;
+  --elevation-2: #303030;
+
+  /* Cores principais */
+  --primary: #69b3fd; /* Azul vibrante */
+  --primary-foreground: #ffffff;
+
+  --secondary: #26A69A; /* Teal vibrante */
+  --secondary-foreground: #1a1a1a;
+
+  /* Acentos sutis derivados */
+  --accent: #7B1FA2; /* Roxo vibrante */
+  --accent-foreground: #ffffff;
+
+  /* Estados */
+  --success: #388E3C; /* Verde escuro */
+  --success-foreground: #ffffff;
+
+  --error: #D81B60; /* Rosa magenta */
+  --error-foreground: #ffffff;
+
+  --warning: #512DA8; /* Roxo escuro */
+  --warning-foreground: #ffffff;
+
+  --info: #0288D1; /* Azul claro */
+  --info-foreground: #ffffff;
+
+  /* Bordas, inputs, anéis */
+  --border: #3a3a3a;
+  --input: #2a2a2a;
+  --ring: #1976D2;
+
+  /* Complementares */
+  --muted: #2a2a2a;
+  --muted-foreground: #b0b0b0;
+
+  /* Componentes */
+  --card: #252525;
+  --card-foreground: #ffffff;
+  --popover: #252525;
+  --popover-foreground: #ffffff;
+  --destructive: #D81B60;
+  --destructive-foreground: #ffffff;
+
+  /* Sidebar */
+  --sidebar: #252525;
+  --sidebar-foreground: #b0b0b0;
+  --sidebar-primary: #1976D2;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #26A69A;
+  --sidebar-accent-foreground: #1a1a1a;
+  --sidebar-border: #3a3a3a;
+  --sidebar-ring: #1976D2;
+
+  /* Charts (tons derivados da paleta) */
+  --chart-1: #1976D2; /* Azul vibrante */
+  --chart-2: #26A69A; /* Teal vibrante */
+  --chart-3: #7B1FA2; /* Roxo vibrante */
+  --chart-4: #388E3C; /* Verde escuro */
+  --chart-5: #0288D1; /* Azul claro */
+}
+
+/* Transições suaves - DESATIVADAS */
+/* *,
+*::before,
+*::after {
+  transition: background-color 0.4s ease, border-color 0.4s ease,
+    color 0.4s ease, fill 0.4s ease, stroke 0.4s ease, opacity 0.4s ease,
+    box-shadow 0.4s ease, transform 0.4s ease;
+} */
+
+*:focus,
+*:focus-visible,
+.no-transition,
+.no-transition * {
+  transition: none !important;
+}
 
 body {
   background-color: var(--background);
-  color: var(--foreground);
+  color: var(--text);
   font-family: var(--font-sans, Arial, Helvetica, sans-serif);
 }
 
-/* Transição suave ao trocar de tema */
-*,
-*::before,
-*::after {
-  transition:
-    background-color 0.3s ease,
-    border-color 0.3s ease,
-    color 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-/* FIX: Transição específica para placeholders */
-input::placeholder,
-textarea::placeholder {
-  color: var(--secondary);
-  transition: color 0.3s ease;
-}
-
-/* Classes utilitárias para elevação */
-.elevation-1 {
-  background-color: var(--elevation-1);
-  box-shadow: var(--shadow-1);
-}
-
-.elevation-2 {
-  background-color: var(--elevation-2);
-  box-shadow: var(--shadow-2);
-}
-
-.elevation-3 {
-  background-color: var(--elevation-3);
-  box-shadow: var(--shadow-3);
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

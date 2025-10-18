@@ -1,20 +1,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Sun, Moon, Magnifer, CheckCircle, ShieldWarning, CloseCircle, AltArrowUp, 
-        User, Letter, ArrowRight, HamburgerMenu, Programming, Cloud, ServerMinimalistic, Smartphone
-} from '@solar-icons/react'; 
+import { Letter, ArrowRight, HamburgerMenu, Programming, Cloud, ServerMinimalistic, Smartphone } from '@solar-icons/react'; 
 import { FaDocker, FaReact, FaNode } from 'react-icons/fa';
 import { SiNextdotjs, SiNestjs, SiTypescript, SiPostgresql, SiN8N, SiKubernetes, SiNeo4J, SiRedis, SiNginx } from 'react-icons/si';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/Card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Navbar } from '@/components/ui/Navbar';
-import { Skeleton } from "@/components/ui/skeleton";
-import { Switch } from "@/components/ui/switch";
 import { Toaster } from "@/components/ui/Toaster";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { LetterOpened, Phone } from '@solar-icons/react/ssr';
@@ -118,7 +113,7 @@ export default function Home() {
           <DialogHeader>
             <DialogTitle>{selectedProject?.title ?? ''}</DialogTitle>
           </DialogHeader>
-          <p className="text-secondary mb-4">{selectedProject?.fullDescription}</p>
+          <p className="text-foreground mb-4">{selectedProject?.fullDescription}</p>
           <div className="flex gap-2 flex-wrap">
             {selectedProject?.tags.map(tag => (
               <Badge key={tag} variant="secondary">{tag}</Badge>
@@ -131,7 +126,7 @@ export default function Home() {
         isDarkMode={isDarkMode}
         onThemeToggle={handleThemeToggle}
         centerContent={
-          <div className="flex items-center gap-5 text-xl font-medium text-secondary">
+          <div className="flex items-center gap-5 text-xl font-medium text-foreground">
             {navLinks.map(link => (
               <a key={link.href} href={link.href} className="hover:text-foreground p-4 transition-colors">{link.label}</a>
             ))}
@@ -139,8 +134,8 @@ export default function Home() {
         }
       >
         <div className="hidden md:flex items-center gap-4">
-          <Button variant="default" className='w-[140px] h-[36px]'>Registre-se</Button>
-          <Button variant="secondary" className='w-[120px] h-[36px]'>Sign-in</Button>
+          <Button variant="default" className='w-[140px] h-[36px] font-bold'>Registre-se</Button>
+          <Button variant="secondary" className='w-[120px] h-[36px] font-bold'>Sign-in</Button>
         </div>
         <div className="md:hidden">
           <DropdownMenu>
@@ -163,11 +158,11 @@ export default function Home() {
       <main>
         <section className="pt-22 pb-20 px-6 text-center">
             <div className="container mx-auto max-w-4xl space-y-6">
-                <Badge variant="default" className="mb-4">Desenvolvimento de Software de Ponta a Ponta</Badge>
+                <Badge variant="default" className="mb-4 font-bold">Desenvolvimento de Software de Ponta a Ponta</Badge>
                 <h1 className="text-9xl md:text-9xl font-bold text-foreground">
                     Tehkly
                 </h1>
-                <p className="text-xl md:text-2xl text-secondary max-w-2xl mx-auto">
+                <p className="text-xl md:text-2xl text-foreground max-w-2xl mx-auto">
                     Desenvolvendo o seu futuro.
                 </p>
                 <div className="flex gap-4 justify-center pt-8">
@@ -186,13 +181,13 @@ export default function Home() {
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">
                 Sobre a <span className="text-primary">Tehkly</span>
             </h2>
-            <p className="text-lg text-secondary leading-relaxed">
+            <p className="text-lg text-foreground leading-relaxed">
                 Somos uma startup especializada no desenvolvimento de soluções tecnológicas inteligentes e inovadoras. Nosso propósito é transformar ideias em produtos digitais robustos, escaláveis e de alto desempenho, utilizando tecnologias avançadas e práticas modernas de engenharia de software para elevar continuamente o padrão de qualidade dos nossos projetos.
             </p>
-            <p className="mt-5 text-lg text-secondary leading-relaxed">
+            <p className="mt-5 text-lg text-foreground leading-relaxed">
                 Acompanhamos de perto as principais tendências do mercado e as adaptamos de forma estratégica para maximizar eficiência, competitividade e impacto. Atuamos em parceria com profissionais e empresas que compartilham nossa visão de excelência, o que nos permite entregar soluções completas e bem estruturadas.
             </p>
-            <p className='mt-5 text-lg text-secondary leading-relaxed'>
+            <p className='mt-5 text-lg text-foreground leading-relaxed'>
                 Nosso compromisso é oferecer produtos e serviços que impulsionem negócios, acelerem processos e gerem valor real, sempre com foco em qualidade, inovação e profissionalismo.
             </p>
             </div>
@@ -203,7 +198,7 @@ export default function Home() {
                 <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
                     <span className="text-primary">Tecnologias</span> que Utilizamos
                 </h2>
-                <p className="text-secondary mb-16 text-lg">
+                <p className="text-foreground mb-16 text-lg">
                     Algumas das ferramentas e frameworks que utilizamos em nossos trabalhos.
                 </p>
                 <div className="flex flex-wrap justify-center">
@@ -232,7 +227,7 @@ export default function Home() {
             <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 text-foreground">
                 Nossos <span className="text-primary">Serviços</span>
             </h2>
-            <p className="text-center text-secondary mb-16 text-lg">
+            <p className="text-center text-foreground mb-16 text-lg">
                 Alcançamos várias áreas da tecnologia trabalhando em uma vasta gama de serviços.
             </p>
 
@@ -244,7 +239,7 @@ export default function Home() {
                         </div>
                         <h3 className="text-xl font-bold text-foreground">Desenvolvimento Web</h3>
                     </div>
-                    <p className="text-secondary flex-grow grid place-items-center text-center">Criamos websites e aplicações web modernas, responsivas e otimizadas para performance.</p>
+                    <p className="text-foreground flex-grow grid place-items-center text-center">Criamos websites e aplicações web modernas, responsivas e otimizadas para performance.</p>
                 </div>
 
                 <div className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-xl hover:shadow-primary/5 dark:hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 group flex flex-col h-[280px]">
@@ -254,7 +249,7 @@ export default function Home() {
                         </div>
                         <h3 className="text-xl font-bold text-foreground">Sistemas em Nuvem</h3>
                     </div>
-                    <p className="text-secondary flex-grow grid place-items-center text-center">Infraestrutura escalável e segura usando as principais plataformas cloud do mercado.</p>
+                    <p className="text-foreground flex-grow grid place-items-center text-center">Infraestrutura escalável e segura usando as principais plataformas cloud do mercado.</p>
                 </div>
 
                 <div className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-xl hover:shadow-primary/5 dark:hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 group flex flex-col h-[280px]">
@@ -264,7 +259,7 @@ export default function Home() {
                         </div>
                         <h3 className="text-xl font-bold text-foreground">Automação de Sistemas</h3>
                     </div>
-                    <p className="text-secondary flex-grow grid place-items-center text-center">Automatizamos processos repetitivos para aumentar produtividade e reduzir custos.</p>
+                    <p className="text-foreground flex-grow grid place-items-center text-center">Automatizamos processos repetitivos para aumentar produtividade e reduzir custos.</p>
                 </div>
 
                 <div className="bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-xl hover:shadow-primary/5 dark:hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 group flex flex-col h-[280px]">
@@ -274,7 +269,7 @@ export default function Home() {
                         </div>
                         <h3 className="text-xl font-bold text-foreground">Aplicações Mobile</h3>
                     </div>
-                    <p className="text-secondary flex-grow grid place-items-center text-center">Desenvolvemos apps nativos e híbridos para iOS e Android com excelente UX.</p>
+                    <p className="text-foreground flex-grow grid place-items-center text-center">Desenvolvemos apps nativos e híbridos para iOS e Android com excelente UX.</p>
                 </div>
             </div>
           </div>
@@ -287,9 +282,9 @@ export default function Home() {
                         Não encontrou o serviço que procurava?
                     </h2>
                     <h2 className="text-4xl md:text-6xl font-bold mb-4 text-foreground">
-                        <span className="text-primary">Nós</span> temos a <span className='text-primary'>solução</span>!
+                        Nós <span className="text-primary">desenvolvemos</span> a <span className='text-primary'>solução</span>!
                     </h2>
-                    <p className="text-secondary text-lg max-w-2xl mx-auto">
+                    <p className="text-foreground text-lg max-w-2xl mx-auto">
                         A Tehkly desenvolve sistemas personalizados, transformando suas ideias em realidade. Nossa equipe está pronta para discutir seu próximo projeto!
                     </p>
                 </div>
@@ -301,8 +296,8 @@ export default function Home() {
                                 <Phone size={28} weight='LineDuotone' className="flex-shrink-0 mt-1"/>
                                 <div>
                                     <h3 className="text-foreground font-semibold mb-2">Telefone</h3>
-                                    <p className="text-secondary text-sm">+55 (31) 99606-6511 - João Victor</p>
-                                    <p className="text-secondary text-sm">+55 (31) 97568-2079 - Felipe Fialho</p>
+                                    <p className="text-foreground text-sm">+55 (31) 99606-6511 - João Victor</p>
+                                    <p className="text-foreground text-sm">+55 (31) 97568-2079 - Felipe Fialho</p>
                                 </div>
                             </div>
                         </div>
@@ -312,7 +307,7 @@ export default function Home() {
                                 <Letter size={28} weight='LineDuotone' className="flex-shrink-0 mt-1"/>
                                 <div>
                                     <h3 className="text-foreground font-semibold mb-2">E-mail</h3>
-                                    <p className="text-secondary text-sm break-all">contato@tehkly.com</p>
+                                    <p className="text-foreground text-sm break-all">contato@tehkly.com</p>
                                 </div>
                             </div>
                         </div>
@@ -331,7 +326,7 @@ export default function Home() {
                             <h3 className="text-2xl font-bold text-foreground mb-2">
                                 Solicite uma Proposta
                             </h3>
-                            <p className="text-secondary mb-8">
+                            <p className="text-foreground mb-8">
                                 Preencha os campos abaixo com suas informações e detalhes do projeto
                             </p>
 
@@ -372,7 +367,7 @@ export default function Home() {
                                     </label>
                                     <textarea
                                         rows={6}
-                                        className="w-full bg-background border border-border rounded-lg p-4 text-foreground placeholder:text-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none"
+                                        className="w-full bg-background border border-border rounded-lg p-4 text-foreground placeholder:text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 resize-none"
                                         placeholder="Descreva seu projeto, objetivos e prazos desejados..."
                                         required
                                     />
@@ -385,7 +380,7 @@ export default function Home() {
                                         className="mt-1 w-4 h-4 accent-primary"
                                         required 
                                     />
-                                    <label htmlFor="terms" className="text-sm text-secondary">
+                                    <label htmlFor="terms" className="text-sm text-foreground">
                                         Concordo em compartilhar essas informações e autorizo o contato da equipe Tehkly
                                     </label>
                                 </div>
@@ -408,7 +403,7 @@ export default function Home() {
       </main>
 
       <footer className="pl-20 border-t border-border py-8 px-6">
-        <div className="container mx-auto max-w-6xl text-center text-secondary">
+        <div className="container mx-auto max-w-6xl text-center text-foreground">
           <p>&copy; {new Date().getFullYear()} Tehkly. Todos os direitos reservados.</p>
         </div>
       </footer>
