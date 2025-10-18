@@ -1,6 +1,26 @@
 version: '3.8'
 
 services:
+  tehkly_db:
+    container_name: tehkly_db
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=tehkly_user
+      - POSTGRES_PASSWORD=tehkly_password
+      - POSTGRES_DB=tehkly_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - tehkly_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tehkly_user -d tehkly_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   tehkly_backend:
     container_name: tehkly_backend
     image: ${DOCKER_USER}/tehkly-backend:latest
@@ -12,6 +32,16 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=4000
+      - DATABASE_URL=postgresql://tehkly_user:tehkly_password@tehkly_db:5432/tehkly_db
+      # Ou separado:
+      - DB_HOST=tehkly_db
+      - DB_PORT=5432
+      - DB_USER=tehkly_user
+      - DB_PASSWORD=tehkly_password
+      - DB_NAME=tehkly_db
+    depends_on:
+      tehkly_db:
+        condition: service_healthy
     restart: always
     networks:
       - tehkly_network
@@ -28,7 +58,8 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - NEXT_PUBLIC_API_URL=http://tehkly_backend:4000
+      # - NEXT_PUBLIC_API_URL=http://tehkly_backend:4000
+      - NEXT_PUBLIC_API_URL=http://localhost:4000
     depends_on:
       - tehkly_backend
     restart: always
@@ -41,3 +72,7 @@ networks:
     driver: bridge
   proxy_network:
     external: true
+
+volumes:
+  postgres_data:
+    driver: local

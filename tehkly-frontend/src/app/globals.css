@@ -94,7 +94,7 @@
   --secondary-foreground: #1a1a1a;
 
   /* Acentos sutis derivados */
-  --accent: #7B1FA2; /* Roxo vibrante */
+  --accent: #56ffbe; /* Roxo vibrante */
   --accent-foreground: #ffffff;
 
   /* Estados */
@@ -162,11 +162,11 @@
   --primary: #69b3fd; /* Azul vibrante */
   --primary-foreground: #ffffff;
 
-  --secondary: #26A69A; /* Teal vibrante */
+  --secondary: #1cd4c2; /* Teal vibrante */
   --secondary-foreground: #1a1a1a;
 
   /* Acentos sutis derivados */
-  --accent: #7B1FA2; /* Roxo vibrante */
+  --accent: #56ffbe; /* Roxo vibrante */
   --accent-foreground: #ffffff;
 
   /* Estados */
