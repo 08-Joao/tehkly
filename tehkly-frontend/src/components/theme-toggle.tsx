@@ -37,7 +37,7 @@ export function ThemeToggle() {
 
 
   return (
-    <div className="p-1.5 bg-elevation-2 rounded-lg">
+    <div className="p-1 bg-elevation-2 rounded-lg">
 
     <button
       onClick={handleThemeToggle}
