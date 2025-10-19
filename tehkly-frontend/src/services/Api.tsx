@@ -19,6 +19,15 @@ const Api = {
         console.log(e)
       }  
     },
+    verifyToken: async function () {
+      try{
+        const response = authRoute.get('/auth/verify-token', { withCredentials: true })
+
+        return response
+      }catch(e){
+        console.log(e)
+      }  
+    },
 }
 
 export default Api

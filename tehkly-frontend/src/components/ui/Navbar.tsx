@@ -16,6 +16,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Api from "@/services/Api";
 
 
 const navLinks = [
@@ -40,8 +41,12 @@ export const Navbar = () => {
 
     // Verifica se o usuário está logado ao montar o componente
     useEffect(() => {
-        const accessToken = getCookie('accessToken');
-        setIsLoggedIn(!!accessToken);
+        const response = await Api.verifyToken();
+
+        if(response && 'data' in response){
+            setIsLoggedIn(response.data.valid);
+        }
+        
 
         // TODO: Quando implementar o sistema de fotos, buscar a foto do usuário aqui
         // Exemplo: const photo = await fetchUserPhoto();
@@ -138,8 +143,7 @@ export const Navbar = () => {
             {/* Navbar para Mobile */}
             <div className="fixed top-0 z-50 flex w-full items-center justify-between border-b border-foreground/10 bg-background/80 p-4 backdrop-blur-lg md:hidden">
                 <a href="#" className="flex items-center gap-2 text-xl font-bold text-foreground">
-                    {/* <Image src="/teh-rex_background.png" alt="Tehkly Logo" width={28} height={28} /> */}
-                    <img src="/teh-rex_background.png" alt="Tehkly Logo" width={28} height={28} />
+                    <Image src="/teh-rex_background.png" alt="Tehkly Logo" width={28} height={28} />
                     <span>Tehkly</span>
                 </a>
                 <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(!isMenuOpen)}>
