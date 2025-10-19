@@ -3,25 +3,25 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from "next/image";
-import { MenuDots } from '@solar-icons/react/ssr'; 
+import { MenuDots } from '@solar-icons/react/ssr';
 import { User, CreditCard, LogOut } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "../theme-toggle";
 import { Avatar } from "@/components/ui/avatar";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 
 const navLinks = [
-  { href: '#servicos', label: 'Serviços' },
-  { href: '#projetos', label: 'Projetos' },
-  { href: '#contato', label: 'Contato' },
+    { href: '#servicos', label: 'Serviços' },
+    { href: '#projetos', label: 'Projetos' },
+    { href: '#contato', label: 'Contato' },
 ];
 
 // Função auxiliar para verificar se o usuário está logado
@@ -42,7 +42,7 @@ export const Navbar = () => {
     useEffect(() => {
         const accessToken = getCookie('accessToken');
         setIsLoggedIn(!!accessToken);
-        
+
         // TODO: Quando implementar o sistema de fotos, buscar a foto do usuário aqui
         // Exemplo: const photo = await fetchUserPhoto();
         // setUserPhoto(photo);
@@ -51,7 +51,7 @@ export const Navbar = () => {
     // Define as URLs baseadas no ambiente
     const isProduction = process.env.NODE_ENV === 'production';
     const authBaseUrl = isProduction ? 'https://auth.tehkly.com' : 'http://localhost:3004';
-    
+
     const signInUrl = `${authBaseUrl}/signin`;
     const signUpUrl = `${authBaseUrl}/signup`;
 
@@ -81,7 +81,7 @@ export const Navbar = () => {
     return (
         <header>
             {/* Navbar para Desktop */}
-            <motion.nav 
+            <motion.nav
                 initial={{ y: -100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
@@ -138,7 +138,8 @@ export const Navbar = () => {
             {/* Navbar para Mobile */}
             <div className="fixed top-0 z-50 flex w-full items-center justify-between border-b border-foreground/10 bg-background/80 p-4 backdrop-blur-lg md:hidden">
                 <a href="#" className="flex items-center gap-2 text-xl font-bold text-foreground">
-                    <Image src="/teh-rex_background.png" alt="Tehkly Logo" width={28} height={28} />
+                    {/* <Image src="/teh-rex_background.png" alt="Tehkly Logo" width={28} height={28} /> */}
+                    <img src="/teh-rex_background.png" alt="Tehkly Logo" width={28} height={28} />
                     <span>Tehkly</span>
                 </a>
                 <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -171,14 +172,14 @@ export const Navbar = () => {
                                     </a>
                                 ))}
                                 <div className="my-4 h-px w-full bg-foreground/10"></div>
-                                
+
                                 {/* Botões de autenticação para Mobile */}
                                 {isLoggedIn ? (
                                     <>
                                         <div className="flex flex-col items-center gap-4 w-full">
                                             <Avatar src={userPhoto} fallback="U" alt="User avatar" className="h-16 w-16" />
-                                            <Button 
-                                                className="w-full" 
+                                            <Button
+                                                className="w-full"
                                                 variant="outline"
                                                 onClick={() => {
                                                     handleProfileClick();
@@ -188,8 +189,8 @@ export const Navbar = () => {
                                                 <User className="mr-2 h-4 w-4" />
                                                 Profile
                                             </Button>
-                                            <Button 
-                                                className="w-full" 
+                                            <Button
+                                                className="w-full"
                                                 variant="outline"
                                                 onClick={() => {
                                                     handleSubscriptionsClick();
@@ -199,8 +200,8 @@ export const Navbar = () => {
                                                 <CreditCard className="mr-2 h-4 w-4" />
                                                 Subscriptions
                                             </Button>
-                                            <Button 
-                                                className="w-full" 
+                                            <Button
+                                                className="w-full"
                                                 variant="destructive"
                                                 onClick={() => {
                                                     handleSignOut();
@@ -218,7 +219,7 @@ export const Navbar = () => {
                                         <Button className="w-full" onClick={handleSignInClick}>Sign In</Button>
                                     </>
                                 )}
-                                
+
                                 {/* Componente ThemeToggle reutilizado para consistência */}
                                 <div className="w-full">
                                     <ThemeToggle />

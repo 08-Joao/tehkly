@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
     // Ignorar erros de TypeScript durante o build de produção
     ignoreBuildErrors: true,
   },
+  images: {
+    unoptimized: true, // Se estiver tendo problemas com otimização
+  },
 };
 
 export default nextConfig;

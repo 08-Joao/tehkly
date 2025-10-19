@@ -17,6 +17,16 @@ function isPublicRoute(pathname: string): boolean {
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  // Ignora requisições de arquivos estáticos e imagens
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/static') ||
+    pathname.match(/\.(png|jpg|jpeg|gif|svg|ico|webp|css|js|woff|woff2|ttf|eot)$/)
+  ) {
+    return NextResponse.next()
+  }
+
   const sessionCookie = request.cookies.get(AUTH_COOKIE_NAME)
 
   // Detecta ambiente (produção vs local)
@@ -41,6 +51,13 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 }
