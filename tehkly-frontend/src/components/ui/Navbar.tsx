@@ -41,12 +41,20 @@ export const Navbar = () => {
 
     // Verifica se o usuário está logado ao montar o componente
     useEffect(() => {
-        const response = await Api.verifyToken();
-
-        if(response && 'data' in response){
-            setIsLoggedIn(response.data.valid);
+        async function fetchAuthStatus() {
+            const response = await Api.verifyToken();
+    
+            if(response && 'data' in response){
+                setIsLoggedIn(response.data.valid);
+            }
         }
-        
+        fetchAuthStatus();
+    
+        // Verifica se o usuário tem um cookie de autenticação
+        const accessToken = getCookie('accessToken');
+        if (accessToken) {
+            setIsLoggedIn(true);
+        }
 
         // TODO: Quando implementar o sistema de fotos, buscar a foto do usuário aqui
         // Exemplo: const photo = await fetchUserPhoto();
