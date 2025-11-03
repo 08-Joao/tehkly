@@ -199,46 +199,110 @@ const ProjectsSection = ({ openModal }: { openModal: (project: Project) => void 
   </section>
 );
 
-const ContactSection = ({ onSubmit }: { onSubmit: () => void }) => (
-  <section id="contato" className="py-20 px-4">
-    <div className="container mx-auto max-w-4xl">
-      <GlassCard className="p-8 md:p-12">
-        <div className="text-center">
-          <h2 className="font-sans text-4xl font-bold tracking-tighter text-foreground md:text-5xl">
-            Vamos construir algo <span className="text-primary">incrível juntos.</span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-            Tem uma ideia ou um desafio para nós? Preencha o formulário e nossa equipe entrará em contato.
-          </p>
-        </div>
-        <form className="mt-12 space-y-6" onSubmit={(e) => { e.preventDefault(); onSubmit(); }}>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <Input placeholder="Seu nome completo *" required className="h-12 bg-card/50 backdrop-blur-sm" />
-            <Input type="email" placeholder="Seu melhor email *" required className="h-12 bg-card/50 backdrop-blur-sm" />
+const ContactSection = ({ onSubmit }: { onSubmit: (formData: { name: string; email: string; message: string }) => void }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
+    const message = formData.get('message') as string;
+
+    try {
+      const response = await fetch('https://discord.com/api/webhooks/1434918396763439186/Ap_zLb9mWGhhoRVdDN1ikcRdOO0NQpgogmq8z_0nPLZGkZf6Czzetijhs5Ke-0TTcWLs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          embeds: [
+            {
+              title: '📬 Novo Contato Recebido',
+              color: 3447003,
+              fields: [
+                {
+                  name: '👤 Nome',
+                  value: name,
+                  inline: true,
+                },
+                {
+                  name: '📧 Email',
+                  value: email,
+                  inline: true,
+                },
+                {
+                  name: '💬 Mensagem',
+                  value: message,
+                  inline: false,
+                },
+              ],
+              footer: {
+                text: 'Tehkly - Formulário de Contato',
+              },
+              timestamp: new Date().toISOString(),
+            },
+          ],
+        }),
+      });
+
+      if (response.ok) {
+        onSubmit({ name, email, message });
+        (e.target as HTMLFormElement).reset();
+      } else {
+        throw new Error('Erro ao enviar mensagem');
+      }
+    } catch (error) {
+      console.error('Erro:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <section id="contato" className="py-20 px-4">
+      <div className="container mx-auto max-w-4xl">
+        <GlassCard className="p-8 md:p-12">
+          <div className="text-center">
+            <h2 className="font-sans text-4xl font-bold tracking-tighter text-foreground md:text-5xl">
+              Vamos construir algo <span className="text-primary">incrível juntos.</span>
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
+              Tem uma ideia ou um desafio para nós? Preencha o formulário e nossa equipe entrará em contato.
+            </p>
           </div>
-          <textarea
-            rows={6}
-            className="w-full rounded-lg bg-card/50 p-4 text-foreground placeholder:text-muted-foreground resize-none backdrop-blur-sm border border-border focus:ring-2 focus:ring-primary"
-            placeholder="Descreva seu projeto, objetivos e o que você precisa..."
-            required
-          />
-          <div className="flex flex-col items-center sm:flex-row sm:justify-between gap-6">
-            <label className="flex cursor-pointer items-center gap-2.5 select-none text-sm text-muted-foreground">
-              <input type="checkbox" required className="sr-only peer" />
-              <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-foreground/20 peer-checked:bg-primary peer-checked:border-primary">
-                <svg className="h-3.5 w-3.5 text-primary-foreground opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-              </div>
-              Concordo em compartilhar minhas informações.
-            </label>
-            <Button type="submit" size="lg" className="w-full sm:w-auto text-base font-semibold">
-              Enviar Solicitação <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </div>
-        </form>
-      </GlassCard>
-    </div>
-  </section>
-);
+          <form className="mt-12 space-y-6" onSubmit={handleFormSubmit}>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <Input name="name" placeholder="Seu nome completo *" required className="h-12 bg-card/50 backdrop-blur-sm" />
+              <Input name="email" type="email" placeholder="Seu melhor email *" required className="h-12 bg-card/50 backdrop-blur-sm" />
+            </div>
+            <textarea
+              name="message"
+              rows={6}
+              className="w-full rounded-lg bg-card/50 p-4 text-foreground placeholder:text-muted-foreground resize-none backdrop-blur-sm border border-border focus:ring-2 focus:ring-primary"
+              placeholder="Descreva seu projeto, objetivos e o que você precisa..."
+              required
+            />
+            <div className="flex flex-col items-center sm:flex-row sm:justify-between gap-6">
+              <label className="flex cursor-pointer items-center gap-2.5 select-none text-sm text-muted-foreground">
+                <input type="checkbox" required className="sr-only peer" />
+                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-foreground/20 peer-checked:bg-primary peer-checked:border-primary">
+                  <svg className="h-3.5 w-3.5 text-primary-foreground opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                </div>
+                Concordo em compartilhar minhas informações.
+              </label>
+              <Button type="submit" size="lg" disabled={isLoading} className="w-full sm:w-auto text-base font-semibold">
+                {isLoading ? 'Enviando...' : 'Enviar Solicitação'} <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
+          </form>
+        </GlassCard>
+      </div>
+    </section>
+  );
+};
 
 
 // --- PÁGINA PRINCIPAL ---
@@ -261,7 +325,7 @@ export default function Home() {
     setIsModalOpen(true);
   };
 
-  const handleContactSubmit = () => {
+  const handleContactSubmit = (formData: { name: string; email: string; message: string }) => {
     setToaster({ show: true, message: 'Mensagem enviada com sucesso!', type: 'success' });
   };
 
