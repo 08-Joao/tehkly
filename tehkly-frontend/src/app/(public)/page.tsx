@@ -199,8 +199,16 @@ const ProjectsSection = ({ openModal }: { openModal: (project: Project) => void 
   </section>
 );
 
+const formatPhoneNumber = (value: string): string => {
+  const numbers = value.replace(/\D/g, '').slice(0, 11);
+  if (numbers.length <= 2) return numbers.length > 0 ? `(${numbers}` : '';
+  if (numbers.length <= 7) return `(${numbers.slice(0, 2)})${numbers.slice(2)}`;
+  return `(${numbers.slice(0, 2)})${numbers.slice(2, 7)}-${numbers.slice(7)}`;
+};
+
 const ContactSection = ({ onSubmit }: { onSubmit: (formData: { name: string; email: string; message: string }) => void }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [phone, setPhone] = useState('');
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -209,6 +217,7 @@ const ContactSection = ({ onSubmit }: { onSubmit: (formData: { name: string; ema
     const formData = new FormData(e.currentTarget);
     const name = formData.get('name') as string;
     const email = formData.get('email') as string;
+    const phoneValue = phone;
     const message = formData.get('message') as string;
 
     try {
@@ -234,6 +243,11 @@ const ContactSection = ({ onSubmit }: { onSubmit: (formData: { name: string; ema
                   inline: true,
                 },
                 {
+                  name: '📱 Telefone',
+                  value: phoneValue,
+                  inline: true,
+                },
+                {
                   name: '💬 Mensagem',
                   value: message,
                   inline: false,
@@ -251,6 +265,7 @@ const ContactSection = ({ onSubmit }: { onSubmit: (formData: { name: string; ema
       if (response.ok) {
         onSubmit({ name, email, message });
         (e.target as HTMLFormElement).reset();
+        setPhone('');
       } else {
         throw new Error('Erro ao enviar mensagem');
       }
@@ -274,9 +289,12 @@ const ContactSection = ({ onSubmit }: { onSubmit: (formData: { name: string; ema
             </p>
           </div>
           <form className="mt-12 space-y-6" onSubmit={handleFormSubmit}>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6">
               <Input name="name" placeholder="Seu nome completo *" required className="h-12 bg-card/50 backdrop-blur-sm" />
+            </div>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <Input name="email" type="email" placeholder="Seu melhor email *" required className="h-12 bg-card/50 backdrop-blur-sm" />
+              <Input type="tel" placeholder="Seu telefone *" value={phone} onChange={(e) => setPhone(formatPhoneNumber(e.target.value))} required className="h-12 bg-card/50 backdrop-blur-sm" />
             </div>
             <textarea
               name="message"
