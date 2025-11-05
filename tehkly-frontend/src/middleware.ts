@@ -43,9 +43,9 @@ export function middleware(request: NextRequest) {
   // Usuário não logado tentando acessar rota protegida → redireciona para login
   if (!sessionCookie) {
     // Constrói a URL de redirecionamento usando headers do proxy em produção
-    const protocol = request.headers.get('x-forwarded-proto') || request.nextUrl.protocol
+    const protocol = request.headers.get('x-forwarded-proto') || request.nextUrl.protocol.replace(':', '')
     const host = request.headers.get('x-forwarded-host') || request.nextUrl.host
-    const redirectUrl = `${protocol}//${host}${pathname}`
+    const redirectUrl = `${protocol}://${host}${pathname}`
     
     const signinUrl = `${authBaseUrl}/signin?redirect=${encodeURIComponent(redirectUrl)}`
     return NextResponse.redirect(signinUrl)
