@@ -15,6 +15,9 @@ RUN pnpm install --frozen-lockfile
 # Copy source code
 COPY . .
 
+# Generate Prisma Client
+RUN pnpm exec prisma generate
+
 # Build the application
 RUN pnpm run build
 
@@ -34,9 +37,13 @@ COPY --from=builder /app/package.json ./
 COPY --from=builder /app/pnpm-lock.yaml* ./
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/prisma ./prisma
 
 # Expose port
 EXPOSE 4000
+
+# Run Prisma migrations and generate client
+RUN pnpm exec prisma generate && pnpm exec prisma migrate deploy
 
 # Start the application
 CMD ["pnpm", "run", "start:prod"]

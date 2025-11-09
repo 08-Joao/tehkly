@@ -109,7 +109,7 @@ export const Sidebar: React.FC = () => {
       {/* ============================================ */}
       {/* FOOTER DA SIDEBAR - Ações secundárias */}
       {/* ============================================ */}
-      <div className="p-4 border-t border-border space-y-2">
+      {/* <div className="p-4 border-t border-border space-y-2">
         <button
           className={`
             w-full flex items-center gap-3 px-3 py-3 rounded-xl
@@ -125,7 +125,7 @@ export const Sidebar: React.FC = () => {
             <span className="text-sm font-medium">Sair</span>
           )}
         </button>
-      </div>
+      </div> */}
     </aside>
   );
 };

@@ -28,7 +28,13 @@ backendRoute.interceptors.response.use(
         if (error.response?.status === 401 && typeof window !== 'undefined') {
             const currentPath = window.location.pathname;
             if (!currentPath.startsWith('/signin') && !currentPath.startsWith('/signup')) {
-                window.location.href = '/signin';
+                const isProduction = process.env.NODE_ENV === 'production'
+                const authBaseUrl = isProduction
+                    ? 'https://auth.tehkly.com'
+                    : 'http://localhost:3004'
+
+                const signinUrl = `${authBaseUrl}/signin?redirect=${encodeURIComponent(window.location.href)}`
+                window.location.href = signinUrl
             }
         }
         return Promise.reject(error);

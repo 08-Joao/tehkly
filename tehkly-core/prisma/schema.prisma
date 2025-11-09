@@ -9,43 +9,47 @@ datasource db {
 }
 
 model User {
-  id                 String              @id @default(cuid())
-  email              String              @unique
-  name               String?
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  userSubscriptions  UserSubscription[]
-  payments           Payment[]
+  id                String             @id @default(cuid())
+  email             String             @unique
+  name              String?
+  phoneNumber       String             @unique
+  birthDate         String
+  role              UserRole           @default(USER)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  userSubscriptions UserSubscription[]
+  payments          Payment[]
 }
 
 // PLANOS - Criados por admins
 model SubscriptionPlan {
-  id          String   @id @default(cuid())
-  
+  id String @id @default(cuid())
+
   service     Service
-  name        String   // Ex: "Cloud Básico", "Agende Pro"
+  name        String // Ex: "Cloud Básico", "Agende Pro"
   description String?
-  
+
   // Valores base
-  monthlyPrice       Decimal  @db.Decimal(10, 2)
-  
+  monthlyPrice Decimal @db.Decimal(10, 2)
+
   // Descontos por período
-  quarterlyDiscount  Int  @default(0)  // % desconto trimestral
-  annualDiscount     Int  @default(0)  // % desconto anual
-  
-  isActive    Boolean  @default(true)
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  quarterlyDiscount Int @default(0) // % desconto trimestral
+  annualDiscount    Int @default(0) // % desconto anual
+
+  isActive Boolean @default(true)
+  isPublic Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   // Features específicas por serviço
-  cloudFeatures     CloudFeatures?
-  agendeFeatures    AgendeFeatures?
-  freelaFeatures    FreelaFeatures?
-  businessFeatures  BusinessFeatures?
-  
+  cloudFeatures    CloudFeatures?
+  agendeFeatures   AgendeFeatures?
+  freelaFeatures   FreelaFeatures?
+  businessFeatures BusinessFeatures?
+
   userSubscriptions UserSubscription[]
-  
+
   @@unique([service, name])
   @@index([service, isActive])
 }
@@ -53,47 +57,44 @@ model SubscriptionPlan {
 // ===== FEATURES POR SERVIÇO =====
 
 model CloudFeatures {
-  id     String @id @default(cuid())
-  planId String @unique
-  plan   SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  id        String           @id @default(cuid())
+  planId    String           @unique
+  plan      SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
   // Storage
-  storageGB          Int      // Espaço em GB
-    
+  storageGB Int // Espaço em GB
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model AgendeFeatures {
-  id     String @id @default(cuid())
-  planId String @unique
+  id     String           @id @default(cuid())
+  planId String           @unique
   plan   SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
-  
+
   // Limites
-  maxAppointmentsPerMonth  Int      // Agendamentos mensais
-  maxOrganizations         Int      // Organizações
-  maxPointsPerOrganization Int      // Pontos por organização
-  
+  maxAppointmentsPerMonth  Int // Agendamentos mensais
+  maxOrganizations         Int // Organizações
+  maxPointsPerOrganization Int // Pontos por organização
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model FreelaFeatures {
-  id     String @id @default(cuid())
-  planId String @unique
+  id     String           @id @default(cuid())
+  planId String           @unique
   plan   SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
-  
-  
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model BusinessFeatures {
-  id     String @id @default(cuid())
-  planId String @unique
+  id     String           @id @default(cuid())
+  planId String           @unique
   plan   SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
-  
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -101,76 +102,75 @@ model BusinessFeatures {
 // ===== ASSINATURAS DOS USUÁRIOS =====
 
 model UserSubscription {
-  id        String   @id @default(cuid())
-  
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  planId    String
-  plan      SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Restrict)
-  
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  planId String
+  plan   SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Restrict)
+
   // Tipo de plano contratado
-  planType  PlanType
-  
+  planType PlanType
+
   // Valores no momento da contratação (congelados)
-  monthlyPrice      Decimal  @db.Decimal(10, 2)
-  discountPercent   Int      @default(0)
-  totalAmount       Decimal  @db.Decimal(10, 2)
-  
+  monthlyPrice    Decimal @db.Decimal(10, 2)
+  discountPercent Int     @default(0)
+  totalAmount     Decimal @db.Decimal(10, 2)
+
   // Período
-  startDate         DateTime
-  endDate           DateTime
-  
+  startDate DateTime
+  endDate   DateTime
+
   // Status
-  status            SubscriptionStatus @default(PENDING)
-  autoRenew         Boolean            @default(true)
-  
+  status    SubscriptionStatus @default(PENDING)
+  autoRenew Boolean            @default(true)
+
   // Mercado Pago
-  mpPreferenceId    String?
-  mpSubscriptionId  String?
-  
-  payments          Payment[]
-  
+  mpPreferenceId   String?
+  mpSubscriptionId String?
+
+  payments Payment[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@index([userId, status])
   @@index([planId])
   @@index([endDate])
-
-  }
+}
 
 model Payment {
-  id                  String        @id @default(cuid())
-  
-  userId              String
-  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  userSubscriptionId  String
-  userSubscription    UserSubscription  @relation(fields: [userSubscriptionId], references: [id], onDelete: Cascade)
-  
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  userSubscriptionId String
+  userSubscription   UserSubscription @relation(fields: [userSubscriptionId], references: [id], onDelete: Cascade)
+
   // Valores
-  amount              Decimal       @db.Decimal(10, 2)
-  discountAmount      Decimal       @db.Decimal(10, 2) @default(0)
-  finalAmount         Decimal       @db.Decimal(10, 2)
-  
+  amount         Decimal @db.Decimal(10, 2)
+  discountAmount Decimal @default(0) @db.Decimal(10, 2)
+  finalAmount    Decimal @db.Decimal(10, 2)
+
   // Mercado Pago
-  paymentMethod       MercadoPagoPaymentMethod
-  mpPaymentId         String?       @unique
-  mpStatus            String?
-  mpStatusDetail      String?
-  
+  paymentMethod  MercadoPagoPaymentMethod
+  mpPaymentId    String?                  @unique
+  mpStatus       String?
+  mpStatusDetail String?
+
   // Status
-  status              PaymentStatus @default(PENDING)
-  paidAt              DateTime?
-  
+  status PaymentStatus @default(PENDING)
+  paidAt DateTime?
+
   // Webhook e metadados
-  metadata            Json?
-  errorMessage        String?
-  
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
-  
+  metadata     Json?
+  errorMessage String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([userId])
   @@index([userSubscriptionId])
   @@index([status])
@@ -178,6 +178,13 @@ model Payment {
 }
 
 // ===== ENUMS =====
+
+enum UserRole {
+  ROOT
+  SUPER_ADMIN
+  ADMIN
+  USER
+}
 
 enum Service {
   CLOUD
