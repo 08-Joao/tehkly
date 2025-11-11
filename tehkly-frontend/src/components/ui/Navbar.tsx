@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from "next/image";
 import { MenuDots } from '@solar-icons/react/ssr';
-import { User, CreditCard, LogOut } from 'lucide-react';
+import { User, CreditCard, LogOut, Shield } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "../theme-toggle";
 import { Avatar } from "@/components/ui/avatar";
@@ -16,50 +16,19 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import Api from "@/services/Api";
+import { useAuth } from '@/contexts/AuthContext';
 
 
 const navLinks = [
     { href: '#servicos', label: 'Serviços' },
     { href: '#projetos', label: 'Projetos' },
+    { href: '/subscription-plans', label: 'Planos' },
     { href: '#contato', label: 'Contato' },
 ];
 
-// Função auxiliar para verificar se o usuário está logado
-const getCookie = (name: string): string | null => {
-    if (typeof document === 'undefined') return null;
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
-    return null;
-};
-
 export const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userPhoto, setUserPhoto] = useState<string | null>(null);
-
-    // Verifica se o usuário está logado ao montar o componente
-    useEffect(() => {
-        async function fetchAuthStatus() {
-            const response = await Api.verifyToken();
-    
-            if(response && 'data' in response){
-                setIsLoggedIn(response.data.valid);
-            }
-        }
-        fetchAuthStatus();
-    
-        // Verifica se o usuário tem um cookie de autenticação
-        const accessToken = getCookie('accessToken');
-        if (accessToken) {
-            setIsLoggedIn(true);
-        }
-
-        // TODO: Quando implementar o sistema de fotos, buscar a foto do usuário aqui
-        // Exemplo: const photo = await fetchUserPhoto();
-        // setUserPhoto(photo);
-    }, []);
+    const { isLoggedIn, isCheckingAuth, isAdmin, userPhoto, signOut } = useAuth();
 
     // Define as URLs baseadas no ambiente
     const isProduction = process.env.NODE_ENV === 'production';
@@ -76,11 +45,8 @@ export const Navbar = () => {
         window.location.href = signUpUrl;
     };
 
-    const handleSignOut = () => {
-        // Remove o cookie de autenticação
-        document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        setIsLoggedIn(false);
-        window.location.href = '/';
+    const handleSignOut = async () => {
+        await signOut();
     };
 
     const handleProfileClick = () => {
@@ -114,8 +80,11 @@ export const Navbar = () => {
                 <div className="flex items-center gap-2">
                     <ThemeToggle />
                     {/* Botões de autenticação para Desktop */}
-                    {isLoggedIn ? (
-                        <DropdownMenu>
+                    {isCheckingAuth ? (
+                        // Skeleton loading state - circular avatar
+                        <div className="h-10 w-10 rounded-full bg-foreground/10 animate-pulse"></div>
+                    ) : isLoggedIn ? (
+                        <DropdownMenu modal={false}>
                             <DropdownMenuTrigger asChild>
                                 <button className="flex items-center gap-2 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring">
                                     <Avatar src={userPhoto} fallback="U" alt="User avatar" />
@@ -132,6 +101,18 @@ export const Navbar = () => {
                                     <CreditCard className="mr-2 h-4 w-4" />
                                     <span>Subscriptions</span>
                                 </DropdownMenuItem>
+                                {isAdmin && (
+                                    <>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem onClick={() => {
+                                            console.log('Navigating to admin panel');
+                                            window.location.href = '/admin/subscription-plans';
+                                        }}>
+                                            <Shield className="mr-2 h-4 w-4" />
+                                            <span>Admin Panel</span>
+                                        </DropdownMenuItem>
+                                    </>
+                                )}
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem onClick={handleSignOut} variant="destructive">
                                     <LogOut className="mr-2 h-4 w-4" />
@@ -186,7 +167,10 @@ export const Navbar = () => {
                                 <div className="my-4 h-px w-full bg-foreground/10"></div>
 
                                 {/* Botões de autenticação para Mobile */}
-                                {isLoggedIn ? (
+                                {isCheckingAuth ? (
+                                    // Skeleton loading state for mobile - just avatar
+                                    <div className="h-16 w-16 rounded-full bg-foreground/10 animate-pulse"></div>
+                                ) : isLoggedIn ? (
                                     <>
                                         <div className="flex flex-col items-center gap-4 w-full">
                                             <Avatar src={userPhoto} fallback="U" alt="User avatar" className="h-16 w-16" />
@@ -212,6 +196,19 @@ export const Navbar = () => {
                                                 <CreditCard className="mr-2 h-4 w-4" />
                                                 Subscriptions
                                             </Button>
+                                            {isAdmin && (
+                                                <Button
+                                                    className="w-full"
+                                                    variant="outline"
+                                                    onClick={() => {
+                                                        window.location.href = '/admin/subscription-plans';
+                                                        setIsMenuOpen(false);
+                                                    }}
+                                                >
+                                                    <Shield className="mr-2 h-4 w-4" />
+                                                    Admin Panel
+                                                </Button>
+                                            )}
                                             <Button
                                                 className="w-full"
                                                 variant="destructive"
