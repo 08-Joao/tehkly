@@ -7,16 +7,16 @@ services:
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_USER=tehkly_user
-      - POSTGRES_PASSWORD=tehkly_password
-      - POSTGRES_DB=tehkly_db
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
     networks:
       - tehkly_network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tehkly_user -d tehkly_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -32,13 +32,14 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=4000
-      - DATABASE_URL=postgresql://tehkly_user:tehkly_password@tehkly_db:5432/tehkly_db
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@tehkly_db:${DB_PORT}/${DB_NAME}
       # Ou separado:
       - DB_HOST=tehkly_db
-      - DB_PORT=5432
-      - DB_USER=tehkly_user
-      - DB_PASSWORD=tehkly_password
-      - DB_NAME=tehkly_db
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - AUTH_API_URL=${AUTH_API_URL}
     depends_on:
       tehkly_db:
         condition: service_healthy

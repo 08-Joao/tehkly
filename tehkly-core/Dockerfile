@@ -42,11 +42,12 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/prisma ./prisma
 
+# Copy entrypoint script
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
 # Expose port
 EXPOSE 4000
-
-# Create entrypoint script
-RUN echo '#!/bin/sh\nset -e\necho "Running Prisma migrations..."\npnpm exec prisma migrate deploy\necho "Starting application..."\nexec pnpm run start:prod' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
 
 # Start the application
 ENTRYPOINT ["/app/entrypoint.sh"]

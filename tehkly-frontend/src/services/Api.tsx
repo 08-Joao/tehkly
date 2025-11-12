@@ -12,12 +12,9 @@ const Api = {
     },
     getMe: async function () {
       try{
-        console.log('Api.getMe - Making request to /auth/me');
         const response = await backendRoute.get('/auth/me', { withCredentials: true });
-        console.warn('Api.getMe - Response:', response)
         return response;
       }catch(e){
-        console.error('Api.getMe - Error:', e);
         throw e;
       }  
     },
@@ -30,20 +27,6 @@ const Api = {
         console.log(e)
       }  
     },
-
-    // User endpoints
-    // getUser: async function () {
-    //   try {
-    //     console.log('Api.getUser - Making request to /user/me');
-    //     const response = await tehklyRoute.get('/user/me', { withCredentials: true });
-    //     console.log('Api.getUser - Response:', response);
-    //     return response;
-    //   } catch(e: any) {
-    //     console.error('Api.getUser - Error:', e);
-    //     console.error('Api.getUser - Error response:', e?.response);
-    //     throw e;
-    //   }
-    // },
 
     // Subscription Plan endpoints
     getAllSubscriptionPlans: async function () {
