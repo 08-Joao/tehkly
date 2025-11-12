@@ -6,7 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
+    "generate-types": "ts-node scripts/generate-types.ts",
+    "build": "pnpm run generate-types && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start -H 0.0.0.0",
     "start:dev": "nest start --watch",

@@ -18,6 +18,9 @@ COPY . .
 # Generate Prisma Client
 RUN pnpm exec prisma generate
 
+# Generate custom types from schema
+RUN pnpm run generate-types
+
 # Build the application
 RUN pnpm run build
 
