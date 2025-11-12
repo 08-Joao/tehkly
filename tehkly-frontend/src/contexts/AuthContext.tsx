@@ -21,6 +21,7 @@ interface AuthContextType {
   isLoggedIn: boolean;
   isCheckingAuth: boolean;
   isAdmin: boolean;
+  userPhoto?: string;
   signOut: () => Promise<void>;
   checkAuth: () => Promise<void>;
 }
@@ -79,6 +80,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isLoggedIn,
     isCheckingAuth,
     isAdmin,
+    userPhoto: user?.id ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}` : undefined,
     signOut,
     checkAuth,
   };

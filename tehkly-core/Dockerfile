@@ -42,8 +42,8 @@ COPY --from=builder /app/prisma ./prisma
 # Expose port
 EXPOSE 4000
 
-# Run Prisma migrations and generate client
-RUN pnpm exec prisma generate && pnpm exec prisma migrate deploy
+# Create entrypoint script
+RUN echo '#!/bin/sh\nset -e\necho "Running Prisma migrations..."\npnpm exec prisma migrate deploy\necho "Starting application..."\nexec pnpm run start:prod' > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
 
 # Start the application
-CMD ["pnpm", "run", "start:prod"]
+ENTRYPOINT ["/app/entrypoint.sh"]
