@@ -12,8 +12,8 @@ const Api = {
     },
     getMe: async function () {
       try{
-        console.log('Api.getMe - Making request to /user/me');
-        const response = await backendRoute.get('/user/me', { withCredentials: true });
+        console.log('Api.getMe - Making request to /auth/me');
+        const response = await backendRoute.get('/auth/me', { withCredentials: true });
         console.warn('Api.getMe - Response:', response)
         return response;
       }catch(e){

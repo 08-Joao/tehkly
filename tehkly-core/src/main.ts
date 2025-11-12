@@ -8,6 +8,15 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
+
+    app.enableCors({
+    origin: [
+      'http://localhost:3000',
+      'https://tehkly.com',
+    ],
+    credentials: true,
+  });
+
   await app.register(cookiePlugin);
   await app.listen(process.env.PORT ?? 4000, '0.0.0.0');
 }

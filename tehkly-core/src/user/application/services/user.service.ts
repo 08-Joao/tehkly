@@ -21,19 +21,23 @@ async getOrCreate(data: CreateUserDto) {
       });
 
       if (existingUser) {
-        if(existingUser.name !== data.name || existingUser.email !== data.email){
-          // Apenas atualiza dados básicos
+        if(existingUser.name !== data.name || existingUser.email !== data.email || existingUser.phoneNumber !== data.phoneNumber || existingUser.birthDate !== data.birthDate){
+          // Atualiza todos os dados do usuário
           const updatedUser = await this.prismaService.user.update({
             where: { id: data.id },
             data: {
               email: data.email,
               name: data.name,
+              phoneNumber: data.phoneNumber || '',
+              birthDate: data.birthDate,
             },
             include: { userSubscriptions: true },
           });
   
           return updatedUser;
         }
+        // Retorna o usuário existente se os dados são iguais
+        return existingUser;
       }
 
       // 2. Usuário não existe, cria TUDO em uma transação
@@ -43,6 +47,8 @@ async getOrCreate(data: CreateUserDto) {
             id: data.id,
             email: data.email,
             name: data.name,
+            phoneNumber: data.phoneNumber || '',
+            birthDate: data.birthDate || new Date().toISOString(),
           },
         });
 

@@ -1,14 +1,15 @@
 import axios from "axios";
 
-const baseURL =
-    typeof window !== 'undefined' && window.location.hostname.endsWith('tehkly.com')
-        ? 'https://api-agende.tehkly.com/api'
-        : 'http://localhost:4001/api';
 
-const authURL =
-    typeof window !== 'undefined' && window.location.hostname.endsWith('tehkly.com')
+const authURL = process.env.NEXT_PUBLIC_AUTH_API_URL || 
+    (typeof window !== 'undefined' && window.location.hostname.endsWith('tehkly.com')
         ? 'https://api-auth.tehkly.com/'
-        : 'http://localhost:4004/api';
+        : 'http://localhost:4004/api');
+
+const baseURL = process.env.NEXT_PUBLIC_API_URL ||
+    (typeof window !== 'undefined' && window.location.hostname.endsWith('tehkly.com')
+        ? 'https://api.tehkly.com'
+        : 'http://localhost:4000');
 
 const backendRoute = axios.create({
     baseURL,
@@ -20,23 +21,21 @@ const authRoute = axios.create({
     withCredentials: true
 })
 
-// Interceptor para capturar erros 401 (Unauthorized)
+
+// Interceptor para logging de erros
 backendRoute.interceptors.response.use(
     (response) => response,
     (error) => {
-        // Se receber 401 e não estiver na página de login, redireciona
-        if (error.response?.status === 401 && typeof window !== 'undefined') {
-            const currentPath = window.location.pathname;
-            if (!currentPath.startsWith('/signin') && !currentPath.startsWith('/signup')) {
-                const isProduction = process.env.NODE_ENV === 'production'
-                const authBaseUrl = isProduction
-                    ? 'https://auth.tehkly.com'
-                    : 'http://localhost:3004'
+        console.error('[API Error]', error.response?.status, error.config?.url);
+        return Promise.reject(error);
+    }
+);
 
-                const signinUrl = `${authBaseUrl}/signin?redirect=${encodeURIComponent(window.location.href)}`
-                window.location.href = signinUrl
-            }
-        }
+// Interceptor para logging de erros
+authRoute.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        console.error('[Auth API Error]', error.response?.status, error.config?.url);
         return Promise.reject(error);
     }
 );

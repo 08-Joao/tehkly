@@ -30,7 +30,7 @@ services:
     ports:
       - "4000:4000"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - PORT=4000
       - DATABASE_URL=postgresql://tehkly_user:tehkly_password@tehkly_db:5432/tehkly_db
       # Ou separado:
@@ -56,7 +56,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
       - PORT=3000
       # - NEXT_PUBLIC_API_URL=http://tehkly_backend:4000
       - NEXT_PUBLIC_API_URL=http://localhost:4000

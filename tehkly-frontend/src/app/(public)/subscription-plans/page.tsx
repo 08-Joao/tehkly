@@ -1,60 +1,14 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, ReactNode } from 'react';
-import { ArrowRight, Code, Cloud, Server, Smartphone } from '@solar-icons/react/ssr';
-import { FaDocker, FaReact, FaNode } from 'react-icons/fa';
-import { SiNextdotjs, SiNestjs, SiTypescript, SiPostgresql, SiN8N, SiKubernetes, SiNeo4J, SiRedis, SiNginx } from 'react-icons/si';
+import React, { useEffect, useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Check, Zap, Cloud, Briefcase, Calendar } from 'lucide-react';
+import Api from '@/services/Api';
+import { SubscriptionPlan, Service, PlanType } from '@/types/subscription';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
-import { Toaster } from "@/components/ui/Toaster";
-import { motion } from 'framer-motion';
 import { Navbar } from '@/components/ui/Navbar';
-
-// --- TIPOS E DADOS ---
-type ToasterType = 'success' | 'error' | 'warning';
-
-const technologies = [
-  { name: 'React / React Native', icon: <FaReact className="h-8 w-8" /> },
-  { name: 'Next.js', icon: <SiNextdotjs className="h-8 w-8" /> },
-  { name: 'Node.js', icon: <FaNode className="h-8 w-8" /> },
-  { name: 'NestJS', icon: <SiNestjs className="h-8 w-8" /> },
-  { name: 'TypeScript', icon: <SiTypescript className="h-8 w-8" /> },
-  { name: 'PostgreSQL', icon: <SiPostgresql className="h-8 w-8" /> },
-  { name: 'Docker', icon: <FaDocker className="h-8 w-8" /> },
-  { name: 'Kubernetes', icon: <SiKubernetes className="h-8 w-8" /> },
-  { name: 'Neo4j', icon: <SiNeo4J className="h-8 w-8" /> },
-  { name: 'Redis', icon: <SiRedis className="h-8 w-8" /> },
-  { name: 'Nginx', icon: <SiNginx className="h-8 w-8" /> },
-  { name: 'n8n', icon: <SiN8N className="h-8 w-8" /> }
-];
-
-const projects = [
-  {
-    id: 1,
-    title: "Plataforma E-commerce",
-    description: "Solução completa de vendas online com painel administrativo, gestão de estoque e pagamentos integrados.",
-    fullDescription: "Desenvolvemos uma solução de e-commerce robusta e escalável, com painel administrativo para gerenciamento de produtos, pedidos, clientes e relatórios de vendas. A integração com os principais gateways de pagamento e sistemas de frete garante uma experiência fluida para o lojista e o consumidor.",
-    tags: ["React", "Next.js", "NestJS", "PostgreSQL"]
-  },
-  {
-    id: 2,
-    title: "Sistema de Gestão (ERP/CRM)",
-    description: "Dashboard customizado com analytics em tempo real e automação de processos para otimizar operações.",
-    fullDescription: "Criamos um sistema de gestão (ERP/CRM) customizado para otimizar operações internas. O sistema inclui dashboards com métricas em tempo real, automação de tarefas repetitivas, controle de fluxo de trabalho e geração de relatórios, resultando em um aumento significativo de produtividade.",
-    tags: ["TypeScript", "Node.js", "Docker", "React"]
-  },
-  {
-    id: 3,
-    title: "Automação com WhatsApp",
-    description: "Integração via EvolutionAPI para automação de mensagens, chatbots e atendimento ao cliente.",
-    fullDescription: "Implementamos uma solução de automação para o WhatsApp utilizando a EvolutionAPI, permitindo o envio de notificações, campanhas de marketing e a criação de chatbots para atendimento ao cliente 24/7. A solução é containerizada com Docker para fácil deploy e escalabilidade.",
-    tags: ["EvolutionAPI", "NestJS", "Docker", "Webhooks"]
-  }
-];
-
-type Project = typeof projects[0];
 
 const AuroraBackground = () => (
   <div className="absolute inset-0 -z-10 overflow-hidden opacity-40 dark:opacity-30">
@@ -63,316 +17,373 @@ const AuroraBackground = () => (
   </div>
 );
 
-const GlassCard = ({ children, className = '' }: { children: ReactNode, className?: string }) => (
-  <div className={`rounded-3xl border border-foreground/10 bg-card/50 shadow-2xl shadow-black/20 backdrop-blur-xl ${className}`}>
+const GlassCard = ({ children, className = '', featured = false }: { children: React.ReactNode, className?: string, featured?: boolean }) => (
+  <div className={`rounded-3xl border ${featured ? 'border-primary/30 ring-2 ring-primary/20' : 'border-foreground/10'} bg-card/50 shadow-2xl shadow-black/20 backdrop-blur-xl transition-all duration-300 hover:shadow-primary/10 hover:border-primary/20 ${className}`}>
     {children}
   </div>
 );
 
-// --- SEÇÕES DA PÁGINA ---
-
-const HeroSection = () => (
-  <section className="relative flex min-h-screen w-full items-center justify-center overflow-hidden text-center p-4">
-    <AuroraBackground />
-    <div className="z-10 flex flex-col items-center space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-      >
-        <Badge variant="outline" className="border-primary/50 bg-primary/10 py-2 px-4 text-sm font-medium text-primary backdrop-blur-sm">
-          Desenvolvimento de Software de Ponta a Ponta
-        </Badge>
-        <h1 className="mt-6 font-sans text-5xl font-bold tracking-tighter text-foreground sm:text-6xl md:text-8xl bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70">
-          Construindo o Futuro <br /> da Tecnologia, Hoje.
-        </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl">
-          Somos uma startup especializada em transformar ideias em produtos digitais robustos, escaláveis e de alto desempenho.
-        </p>
-      </motion.div>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="flex flex-col sm:flex-row items-center gap-4"
-      >
-        <Button size="lg" className="w-full sm:w-auto text-base font-semibold" onClick={() => document.getElementById('contato')?.scrollIntoView({ behavior: 'smooth' })}>
-          Comece seu Projeto <ArrowRight className="ml-2 h-5 w-5" />
-        </Button>
-        <Button size="lg" variant="secondary" className="w-full sm:w-auto text-base font-semibold" onClick={() => document.getElementById('servicos')?.scrollIntoView({ behavior: 'smooth' })}>
-          Nossos Serviços
-        </Button>
-      </motion.div>
-    </div>
-  </section>
-);
-
-const ServicesSection = () => {
-  const services = [
-    { icon: Code, title: "Desenvolvimento Web", description: "Criamos websites e aplicações web modernas, responsivas e otimizadas para performance." },
-    { icon: Cloud, title: "Sistemas em Nuvem", description: "Infraestrutura escalável e segura usando as principais plataformas cloud do mercado." },
-    { icon: Server, title: "Automação de Sistemas", description: "Automatizamos processos repetitivos para aumentar produtividade e reduzir custos." },
-    { icon: Smartphone, title: "Aplicações Mobile", description: "Desenvolvemos apps nativos e híbridos para iOS e Android com excelente experiência de usuário." },
-  ];
-
-  return (
-    <section id="servicos" className="py-20 px-4">
-      <div className="container mx-auto max-w-6xl text-center">
-        <h2 className="font-sans text-4xl font-bold tracking-tighter text-foreground md:text-5xl">
-          Soluções Inovadoras para <span className="text-primary">Impulsionar seu Negócio</span>
-        </h2>
-        <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-          Do conceito ao deploy, entregamos excelência em cada etapa do desenvolvimento.
-        </p>
-        <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-          {services.map((service, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="group relative overflow-hidden rounded-3xl border border-foreground/10 bg-card/30 p-8 text-center backdrop-blur-lg transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10"
-            >
-              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-                <service.icon className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground">{service.title}</h3>
-              <p className="mt-2 text-muted-foreground">{service.description}</p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+const serviceIcons: Record<Service, React.ReactNode> = {
+  [Service.CLOUD]: <Cloud className="h-8 w-8" />,
+  [Service.AGENDE]: <Calendar className="h-8 w-8" />,
+  [Service.FREELA]: <Zap className="h-8 w-8" />,
+  [Service.BUSINESS]: <Briefcase className="h-8 w-8" />,
 };
 
-const TechMarquee = () => (
-  <div className="relative flex h-48 w-full flex-col items-center justify-center overflow-hidden">
-    <div className="absolute inset-0 z-0 bg-grid-slate-100/30 [mask-image:linear-gradient(to_bottom,transparent,white,transparent)] dark:bg-grid-slate-800/30"></div>
-    <div className="w-full max-w-6xl [mask-image:linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]">
-      <div className="group flex animate-marquee-normal items-center space-x-12">
-        {[...technologies, ...technologies].map((tech, index) => (
-          <div key={index} className="flex flex-shrink-0 flex-col items-center text-muted-foreground transition-colors group-hover:text-foreground">
-            {tech.icon}
-            <span className="mt-2 text-sm font-medium">{tech.name}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
-);
-
-const ProjectsSection = ({ openModal }: { openModal: (project: Project) => void }) => (
-  <section id="projetos" className="py-20 px-4">
-    <div className="container mx-auto max-w-6xl text-center">
-      <h2 className="font-sans text-4xl font-bold tracking-tighter text-foreground md:text-5xl">
-        Projetos que <span className="text-primary">Falam por Nós</span>
-      </h2>
-      <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-        Confira alguns dos desafios que transformamos em soluções de sucesso.
-      </p>
-      <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {projects.map((project, index) => (
-          <motion.div
-            key={project.id}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            viewport={{ once: true }}
-            className="group relative flex flex-col rounded-3xl border border-foreground/10 bg-card/30 p-8 text-left backdrop-blur-lg transition-all duration-300 hover:!border-primary/30 hover:shadow-2xl hover:shadow-primary/10"
-          >
-            <div className="flex-grow">
-              <h3 className="text-2xl font-bold text-foreground">{project.title}</h3>
-              <p className="mt-3 text-muted-foreground">{project.description}</p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {project.tags.map(tag => <Badge key={tag} variant="secondary">{tag}</Badge>)}
-              </div>
-            </div>
-            <Button variant="ghost" className="mt-6 self-start" onClick={() => openModal(project)}>
-              Ver Detalhes <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  </section>
-);
-
-const formatPhoneNumber = (value: string): string => {
-  const numbers = value.replace(/\D/g, '').slice(0, 11);
-  if (numbers.length <= 2) return numbers.length > 0 ? `(${numbers}` : '';
-  if (numbers.length <= 7) return `(${numbers.slice(0, 2)})${numbers.slice(2)}`;
-  return `(${numbers.slice(0, 2)})${numbers.slice(2, 7)}-${numbers.slice(7)}`;
+const serviceColors: Record<Service, string> = {
+  [Service.CLOUD]: 'text-blue-500',
+  [Service.AGENDE]: 'text-green-500',
+  [Service.FREELA]: 'text-purple-500',
+  [Service.BUSINESS]: 'text-orange-500',
 };
 
-const ContactSection = ({ onSubmit }: { onSubmit: (formData: { name: string; email: string; message: string }) => void }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [phone, setPhone] = useState('');
+function SubscriptionPlansContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [subscriptionPlans, setSubscriptionPlans] = useState<SubscriptionPlan[]>([]);
+  const [selectedPeriod, setSelectedPeriod] = useState<PlanType>(PlanType.MONTHLY);
+  const [selectedService, setSelectedService] = useState<Service>(Service.CLOUD);
+  const [loading, setLoading] = useState(true);
 
-  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    const formData = new FormData(e.currentTarget);
-    const name = formData.get('name') as string;
-    const email = formData.get('email') as string;
-    const phoneValue = phone;
-    const message = formData.get('message') as string;
-
-    try {
-      const response = await fetch('https://discord.com/api/webhooks/1434918396763439186/Ap_zLb9mWGhhoRVdDN1ikcRdOO0NQpgogmq8z_0nPLZGkZf6Czzetijhs5Ke-0TTcWLs', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          embeds: [
-            {
-              title: '📬 Novo Contato Recebido',
-              color: 3447003,
-              fields: [
-                {
-                  name: '👤 Nome',
-                  value: name,
-                  inline: true,
-                },
-                {
-                  name: '📧 Email',
-                  value: email,
-                  inline: true,
-                },
-                {
-                  name: '📱 Telefone',
-                  value: phoneValue,
-                  inline: true,
-                },
-                {
-                  name: '💬 Mensagem',
-                  value: message,
-                  inline: false,
-                },
-              ],
-              footer: {
-                text: 'Tehkly - Formulário de Contato',
-              },
-              timestamp: new Date().toISOString(),
-            },
-          ],
-        }),
-      });
-
-      if (response.ok) {
-        onSubmit({ name, email, message });
-        (e.target as HTMLFormElement).reset();
-        setPhone('');
-      } else {
-        throw new Error('Erro ao enviar mensagem');
+  // Initialize service from URL parameter
+  useEffect(() => {
+    const serviceParam = searchParams.get('service');
+    if (serviceParam) {
+      const upperService = serviceParam.toUpperCase();
+      if (Object.values(Service).includes(upperService as Service)) {
+        setSelectedService(upperService as Service);
       }
-    } catch (error) {
-      console.error('Erro:', error);
-    } finally {
-      setIsLoading(false);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    const fetchSubscription = async () => {
+      try {
+        const response = await Api.getAllSubscriptionPlans();
+        if (response && response.data) {
+          setSubscriptionPlans(response.data.filter((plan: SubscriptionPlan) => plan.isPublic && plan.isActive));
+        }
+      } catch (error) {
+        console.error('Error fetching subscription plans:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSubscription();
+  }, []);
+
+  const calculatePrice = (plan: SubscriptionPlan) => {
+    const basePrice = Number(plan.monthlyPrice) || 0;
+    switch (selectedPeriod) {
+      case PlanType.QUARTERLY:
+        return (basePrice * 3 * (1 - plan.quarterlyDiscount / 100)).toFixed(2);
+      case PlanType.ANNUAL:
+        return (basePrice * 12 * (1 - plan.annualDiscount / 100)).toFixed(2);
+      default:
+        return basePrice.toFixed(2);
     }
   };
 
-  return (
-    <section id="contato" className="py-20 px-4">
-      <div className="container mx-auto max-w-4xl">
-        <GlassCard className="p-8 md:p-12">
-          <div className="text-center">
-            <h2 className="font-sans text-4xl font-bold tracking-tighter text-foreground md:text-5xl">
-              Vamos construir algo <span className="text-primary">incrível juntos.</span>
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-              Tem uma ideia ou um desafio para nós? Preencha o formulário e nossa equipe entrará em contato.
-            </p>
-          </div>
-          <form className="mt-12 space-y-6" onSubmit={handleFormSubmit}>
-            <div className="grid grid-cols-1 gap-6">
-              <Input name="name" placeholder="Seu nome completo *" required className="h-12 bg-card/50 backdrop-blur-sm" />
-            </div>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <Input name="email" type="email" placeholder="Seu melhor email *" required className="h-12 bg-card/50 backdrop-blur-sm" />
-              <Input type="tel" placeholder="Seu telefone *" value={phone} onChange={(e) => setPhone(formatPhoneNumber(e.target.value))} required className="h-12 bg-card/50 backdrop-blur-sm" />
-            </div>
-            <textarea
-              name="message"
-              rows={6}
-              className="w-full rounded-lg bg-card/50 p-4 text-foreground placeholder:text-muted-foreground resize-none backdrop-blur-sm border border-border focus:ring-2 focus:ring-primary"
-              placeholder="Descreva seu projeto, objetivos e o que você precisa..."
-              required
-            />
-            <div className="flex flex-col items-center sm:flex-row sm:justify-between gap-6">
-              <label className="flex cursor-pointer items-center gap-2.5 select-none text-sm text-muted-foreground">
-                <input type="checkbox" required className="sr-only peer" />
-                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-foreground/20 peer-checked:bg-primary peer-checked:border-primary">
-                  <svg className="h-3.5 w-3.5 text-primary-foreground opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                </div>
-                Concordo em compartilhar minhas informações.
-              </label>
-              <Button type="submit" size="lg" disabled={isLoading} className="w-full sm:w-auto text-base font-semibold">
-                {isLoading ? 'Enviando...' : 'Enviar Solicitação'} <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </div>
-          </form>
-        </GlassCard>
-      </div>
-    </section>
-  );
-};
-
-
-// --- PÁGINA PRINCIPAL ---
-
-export default function Home() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [toaster, setToaster] = useState<{ show: boolean; message: string; type: ToasterType } | null>(null);
-
-
-  useEffect(() => {
-    document.documentElement.style.scrollBehavior = 'smooth';
-    return () => {
-      document.documentElement.style.scrollBehavior = 'auto';
-    };
-  }, []);
-
-  const openProjectModal = (project: Project) => {
-    setSelectedProject(project);
-    setIsModalOpen(true);
+  const getMonthlyEquivalent = (plan: SubscriptionPlan) => {
+    const totalPrice = parseFloat(calculatePrice(plan));
+    switch (selectedPeriod) {
+      case PlanType.QUARTERLY:
+        return (totalPrice / 3).toFixed(2);
+      case PlanType.ANNUAL:
+        return (totalPrice / 12).toFixed(2);
+      default:
+        return totalPrice.toFixed(2);
+    }
   };
 
-  const handleContactSubmit = (formData: { name: string; email: string; message: string }) => {
-    setToaster({ show: true, message: 'Mensagem enviada com sucesso!', type: 'success' });
+  const getPeriodLabel = () => {
+    switch (selectedPeriod) {
+      case PlanType.QUARTERLY:
+        return 'trimestre';
+      case PlanType.ANNUAL:
+        return 'ano';
+      default:
+        return 'mês';
+    }
   };
 
-  const closeToaster = () => setToaster(null);
+  const getFeatures = (plan: SubscriptionPlan): string[] => {
+    const features: string[] = [];
+    
+    if (plan.cloudFeatures) {
+      features.push(`${plan.cloudFeatures.storageGB}GB de armazenamento`);
+      features.push('Backup automático');
+      features.push('Acesso via API');
+    }
+    
+    if (plan.agendeFeatures) {
+      features.push(`${plan.agendeFeatures.maxAppointmentsPerMonth} agendamentos/mês`);
+      features.push(`${plan.agendeFeatures.maxOrganizations} organizações`);
+      features.push(`${plan.agendeFeatures.maxPointsPerOrganization} pontos por organização`);
+      features.push('Notificações automáticas');
+    }
+    
+    if (plan.freelaFeatures) {
+      features.push('Gestão de projetos');
+      features.push('Controle de horas');
+      features.push('Faturamento integrado');
+    }
+    
+    if (plan.businessFeatures) {
+      features.push('Suporte prioritário');
+      features.push('Consultoria dedicada');
+      features.push('Customização avançada');
+    }
+
+    // Add generic features if no specific features
+    if (features.length === 0) {
+      features.push('Acesso completo à plataforma');
+      features.push('Suporte técnico');
+      features.push('Atualizações gratuitas');
+    }
+
+    return features;
+  };
+
+  const handleServiceChange = (service: Service) => {
+    setSelectedService(service);
+    // Update URL with service parameter
+    router.push(`/subscription-plans?service=${service.toLowerCase()}`, { scroll: false });
+  };
+
+  const isFeaturedPlan = (plan: SubscriptionPlan) => {
+    // Mark plans with highest discount or specific services as featured
+    return plan.annualDiscount >= 20 || plan.service === Service.BUSINESS;
+  };
+
+  const filteredPlans = subscriptionPlans
+    .filter(plan => plan.service === selectedService)
+    .sort((a, b) => Number(a.monthlyPrice) - Number(b.monthlyPrice));
+
+  const serviceOptions = [
+    { value: Service.CLOUD, label: 'Cloud', icon: <Cloud className="h-5 w-5" /> },
+    { value: Service.AGENDE, label: 'Agende', icon: <Calendar className="h-5 w-5" /> },
+    { value: Service.FREELA, label: 'Freela', icon: <Zap className="h-5 w-5" /> },
+    { value: Service.BUSINESS, label: 'Business', icon: <Briefcase className="h-5 w-5" /> },
+  ];
 
   return (
-    <div className="bg-background text-foreground selection:bg-primary/20">
-      {toaster?.show && <Toaster message={toaster.message} type={toaster.type} onClose={closeToaster} />}
-
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="bg-card/80 backdrop-blur-lg border-foreground/10">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-foreground">{selectedProject?.title}</DialogTitle>
-            <DialogDescription className="text-muted-foreground pt-4">{selectedProject?.fullDescription}</DialogDescription>
-          </DialogHeader>
-          <div className="flex gap-2 flex-wrap pt-4">
-            {selectedProject?.tags.map(tag => <Badge key={tag} variant="secondary">{tag}</Badge>)}
-          </div>
-        </DialogContent>
-      </Dialog>
-
+    <div className="min-h-screen bg-background text-foreground">
       <Navbar />
+      
+      <main className="relative pt-24 pb-20 px-4">
+        <AuroraBackground />
+        
+        {/* Header Section */}
+        <div className="container mx-auto max-w-6xl text-center mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <Badge variant="outline" className="border-primary/50 bg-primary/10 py-2 px-4 text-sm font-medium text-primary backdrop-blur-sm mb-6">
+              Planos e Preços
+            </Badge>
+            <h1 className="font-sans text-5xl font-bold tracking-tighter text-foreground md:text-6xl bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70">
+              Escolha o Plano <span className="text-primary">Perfeito</span> para Você
+            </h1>
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
+              Soluções flexíveis e escaláveis para atender suas necessidades. Economize mais com planos anuais.
+            </p>
+          </motion.div>
 
-      <main>
-        <HeroSection />
-        <ServicesSection />
-        <TechMarquee />
-        <ProjectsSection openModal={openProjectModal} />
-        <ContactSection onSubmit={handleContactSubmit} />
+          <div className="flex flex-col items-center gap-4 mt-8">
+            {/* Service Selector */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="w-full max-w-4xl"
+            >
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 rounded-2xl border border-foreground/10 bg-card/50 p-2 backdrop-blur-xl">
+                {serviceOptions.map((service) => (
+                  <button
+                    key={service.value}
+                    onClick={() => handleServiceChange(service.value)}
+                    className={`relative flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition-all whitespace-nowrap justify-center ${
+                      selectedService === service.value
+                        ? 'text-primary-foreground'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {selectedService === service.value && (
+                      <motion.div
+                        layoutId="serviceSelector"
+                        className="absolute inset-0 bg-primary rounded-xl shadow-lg"
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      />
+                    )}
+                    <span className="relative z-10 flex items-center gap-2">
+                      {service.icon}
+                      {service.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Period Selector */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="inline-flex items-center gap-2 rounded-2xl border border-foreground/10 bg-card/50 p-2 backdrop-blur-xl"
+            >
+              {[
+                { type: PlanType.MONTHLY, label: 'Mensal' },
+                { type: PlanType.QUARTERLY, label: 'Trimestral' },
+                { type: PlanType.ANNUAL, label: 'Anual' }
+              ].map((period) => (
+                <button
+                  key={period.type}
+                  onClick={() => setSelectedPeriod(period.type)}
+                  className={`relative rounded-xl px-6 py-3 text-sm font-medium transition-all ${
+                    selectedPeriod === period.type
+                      ? 'text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {selectedPeriod === period.type && (
+                    <motion.div
+                      layoutId="periodSelector"
+                      className="absolute inset-0 bg-primary rounded-xl shadow-lg"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                  <span className="relative z-10">{period.label}</span>
+                </button>
+              ))}
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Plans Grid */}
+        {loading ? (
+          <div className="container mx-auto max-w-6xl text-center">
+            <p className="text-muted-foreground">Carregando planos...</p>
+          </div>
+        ) : filteredPlans.length === 0 ? (
+          <div className="container mx-auto max-w-6xl text-center">
+            <p className="text-muted-foreground">Nenhum plano disponível para este serviço.</p>
+          </div>
+        ) : (
+          <div className="container mx-auto max-w-7xl">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={selectedService}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+              >
+                {filteredPlans.map((plan, index) => {
+                  const featured = isFeaturedPlan(plan);
+                  const features = getFeatures(plan);
+                  
+                  return (
+                    <motion.div
+                      key={plan.id}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: index * 0.05 }}
+                      className={featured ? 'lg:scale-105' : ''}
+                    >
+                      <GlassCard featured={featured} className="p-8 h-full flex flex-col">
+                        {featured && (
+                          <Badge className="mb-4 w-fit">Mais Popular</Badge>
+                        )}
+                        
+                        {/* Service Icon */}
+                        <div className={`mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 ${serviceColors[plan.service]}`}>
+                          {serviceIcons[plan.service]}
+                        </div>
+
+                        {/* Plan Name */}
+                        <h3 className="text-2xl font-bold text-foreground mb-2">{plan.name}</h3>
+                        
+                        {/* Description */}
+                        {plan.description && (
+                          <p className="text-muted-foreground mb-6 text-sm">{plan.description}</p>
+                        )}
+
+                        {/* Price */}
+                        <div className="mb-6">
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-4xl font-bold text-foreground">
+                              R$ {getMonthlyEquivalent(plan)}
+                            </span>
+                            <span className="text-muted-foreground">/mês</span>
+                          </div>
+                          {selectedPeriod !== PlanType.MONTHLY && (
+                            <p className="mt-2 text-sm text-muted-foreground">
+                              R$ {calculatePrice(plan)} cobrado por {getPeriodLabel()}
+                            </p>
+                          )}
+                          {selectedPeriod === PlanType.ANNUAL && plan.annualDiscount > 0 && (
+                            <Badge variant="secondary" className="mt-2">
+                              {plan.annualDiscount}% de desconto
+                            </Badge>
+                          )}
+                          {selectedPeriod === PlanType.QUARTERLY && plan.quarterlyDiscount > 0 && (
+                            <Badge variant="secondary" className="mt-2">
+                              {plan.quarterlyDiscount}% de desconto
+                            </Badge>
+                          )}
+                        </div>
+
+                        {/* Features */}
+                        <ul className="space-y-3 mb-8 flex-grow">
+                          {features.map((feature, idx) => (
+                            <li key={idx} className="flex items-start gap-3">
+                              <Check className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                              <span className="text-sm text-muted-foreground">{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+
+                        {/* CTA Button */}
+                        <Button 
+                          className="w-full" 
+                          variant={featured ? 'default' : 'outline'}
+                          size="lg"
+                        >
+                          Começar Agora
+                        </Button>
+                      </GlassCard>
+                  </motion.div>
+                );
+              })}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        )}
+
+        {/* FAQ or Additional Info Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="container mx-auto max-w-4xl mt-20"
+        >
+          <GlassCard className="p-8 md:p-12 text-center">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
+              Precisa de um Plano Customizado?
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              Entre em contato conosco para criar uma solução personalizada que atenda perfeitamente às suas necessidades.
+            </p>
+            <Button size="lg" onClick={() => window.location.href = '/#contato'}>
+              Falar com Especialista
+            </Button>
+          </GlassCard>
+        </motion.div>
       </main>
 
       <footer className="border-t border-foreground/10 py-8 px-4">
@@ -384,4 +395,17 @@ export default function Home() {
   );
 }
 
-
+export default function SubscriptionPlans() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+          <p className="text-muted-foreground">Carregando planos...</p>
+        </div>
+      </div>
+    }>
+      <SubscriptionPlansContent />
+    </Suspense>
+  );
+}
