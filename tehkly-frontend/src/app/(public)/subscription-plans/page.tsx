@@ -9,6 +9,7 @@ import { SubscriptionPlan, Service, PlanType } from '@/types/subscription';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Navbar } from '@/components/ui/Navbar';
+import { GlassBackground } from '@/components/backgrounds/GlassBackground';
 
 const AuroraBackground = () => (
   <div className="absolute inset-0 -z-10 overflow-hidden opacity-40 dark:opacity-30">
@@ -59,9 +60,9 @@ function SubscriptionPlansContent() {
   useEffect(() => {
     const fetchSubscription = async () => {
       try {
-        const response = await Api.getAllSubscriptionPlans();
+        const response = await Api.getPublicSubscriptionPlans();
         if (response && response.data) {
-          setSubscriptionPlans(response.data.filter((plan: SubscriptionPlan) => plan.isPublic && plan.isActive));
+          setSubscriptionPlans(response.data);
         }
       } catch (error) {
         console.error('Error fetching subscription plans:', error);
@@ -113,27 +114,52 @@ function SubscriptionPlansContent() {
     
     if (plan.cloudFeatures) {
       features.push(`${plan.cloudFeatures.storageGB}GB de armazenamento`);
-      features.push('Backup automático');
-      features.push('Acesso via API');
+      features.push(`Até ${plan.cloudFeatures.maxUsers} usuário(s)`);
+      features.push(`Tamanho máximo de arquivo: ${plan.cloudFeatures.maxFileSize}MB`);
+      if (plan.cloudFeatures.maxBandwidthGB > 0) {
+        features.push(`${plan.cloudFeatures.maxBandwidthGB}GB de banda mensal`);
+      } else {
+        features.push('Banda ilimitada');
+      }
+      if (plan.cloudFeatures.allowPublicSharing) {
+        features.push('Compartilhamento público');
+      }
+      if (plan.cloudFeatures.allowCustomDomain) {
+        features.push('Domínio customizado');
+      }
+      features.push(`Suporte ${plan.cloudFeatures.supportLevel}`);
     }
     
     if (plan.agendeFeatures) {
-      features.push(`${plan.agendeFeatures.maxAppointmentsPerMonth} agendamentos/mês`);
-      features.push(`${plan.agendeFeatures.maxOrganizations} organizações`);
+      features.push(`Até ${plan.agendeFeatures.maxAppointmentsPerMonth} agendamentos/mês`);
+      features.push(`Até ${plan.agendeFeatures.maxOrganizations} organização(ões)`);
       features.push(`${plan.agendeFeatures.maxPointsPerOrganization} pontos por organização`);
-      features.push('Notificações automáticas');
+      if (plan.agendeFeatures.allowCustomBranding) {
+        features.push('Branding customizado');
+      }
+      if (plan.agendeFeatures.allowWhitelabel) {
+        features.push('Solução white-label');
+      }
+      features.push(`Suporte ${plan.agendeFeatures.supportLevel}`);
     }
     
     if (plan.freelaFeatures) {
-      features.push('Gestão de projetos');
-      features.push('Controle de horas');
-      features.push('Faturamento integrado');
+      features.push(`Até ${plan.freelaFeatures.maxProjects} projetos`);
+      features.push(`Até ${plan.freelaFeatures.maxClients} clientes`);
+      if (plan.freelaFeatures.allowInvoicing) {
+        features.push('Faturamento integrado');
+      }
+      if (plan.freelaFeatures.allowTimeTracking) {
+        features.push('Controle de horas');
+      }
+      features.push(`Suporte ${plan.freelaFeatures.supportLevel}`);
     }
     
     if (plan.businessFeatures) {
-      features.push('Suporte prioritário');
+      features.push('Solução empresarial completa');
       features.push('Consultoria dedicada');
       features.push('Customização avançada');
+      features.push(`Suporte ${plan.businessFeatures.supportLevel}`);
     }
 
     // Add generic features if no specific features
@@ -169,11 +195,10 @@ function SubscriptionPlansContent() {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <GlassBackground variant="default" className="min-h-screen bg-background text-foreground">
       <Navbar />
       
       <main className="relative pt-24 pb-20 px-4">
-        <AuroraBackground />
         
         {/* Header Section */}
         <div className="container mx-auto max-w-6xl text-center mb-16">
@@ -391,7 +416,7 @@ function SubscriptionPlansContent() {
           <p>&copy; {new Date().getFullYear()} Tehkly. Todos os direitos reservados.</p>
         </div>
       </footer>
-    </div>
+    </GlassBackground>
   );
 }
 

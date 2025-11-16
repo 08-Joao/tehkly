@@ -18,9 +18,13 @@ model User {
   updatedAt         DateTime           @updatedAt
   userSubscriptions UserSubscription[]
   payments          Payment[]
+  couponUsages      CouponUsage[]
+  cloudUsage        UserCloudUsage[]
+  agendeUsage       UserAgendeUsage[]
 }
 
-// PLANOS - Criados por admins
+// ===== PLANOS - Criados por admins =====
+
 model SubscriptionPlan {
   id String @id @default(cuid())
 
@@ -35,8 +39,12 @@ model SubscriptionPlan {
   quarterlyDiscount Int @default(0) // % desconto trimestral
   annualDiscount    Int @default(0) // % desconto anual
 
-  isActive Boolean @default(true)
-  isPublic Boolean @default(true)
+  // Trial
+  trialDays Int @default(0) // Dias de trial gratuito
+
+  isActive  Boolean   @default(true)
+  isPublic  Boolean   @default(true)
+  deletedAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -51,16 +59,24 @@ model SubscriptionPlan {
 
   @@unique([service, name])
   @@index([service, isActive])
+  @@index([isActive, deletedAt])
 }
 
 // ===== FEATURES POR SERVIÇO =====
 
 model CloudFeatures {
-  id        String           @id @default(cuid())
-  planId    String           @unique
-  plan      SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  id     String           @id @default(cuid())
+  planId String           @unique
+  plan   SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
   // Storage
-  storageGB Int // Espaço em GB
+  storageGB          Int
+  maxUsers           Int     @default(1)
+  maxFileSize        Int // MB
+  maxBandwidthGB     Int     @default(0) // 0 = ilimitado
+  allowPublicSharing Boolean @default(false)
+  allowCustomDomain  Boolean @default(false)
+  supportLevel       String  @default("BASIC") // BASIC, PRIORITY, PREMIUM
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -72,9 +88,12 @@ model AgendeFeatures {
   plan   SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
 
   // Limites
-  maxAppointmentsPerMonth  Int // Agendamentos mensais
-  maxOrganizations         Int // Organizações
-  maxPointsPerOrganization Int // Pontos por organização
+  maxAppointmentsPerMonth  Int
+  maxOrganizations         Int
+  maxPointsPerOrganization Int
+  allowCustomBranding      Boolean @default(false)
+  allowWhitelabel          Boolean @default(false)
+  supportLevel             String  @default("BASIC")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -85,6 +104,12 @@ model FreelaFeatures {
   planId String           @unique
   plan   SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
 
+  maxProjects       Int
+  maxClients        Int
+  allowInvoicing    Boolean @default(false)
+  allowTimeTracking Boolean @default(true)
+  supportLevel      String  @default("BASIC")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -94,8 +119,96 @@ model BusinessFeatures {
   planId String           @unique
   plan   SubscriptionPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
 
+  supportLevel String @default("BASIC")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// ===== RASTREAMENTO DE USO =====
+
+model UserCloudUsage {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  usedStorageGB   Decimal @db.Decimal(10, 2)
+  usedBandwidthGB Decimal @db.Decimal(10, 2)
+  fileCount       Int
+
+  // Resetar mensalmente
+  periodStart DateTime
+  periodEnd   DateTime
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, periodStart])
+  @@index([userId])
+}
+
+model UserAgendeUsage {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  appointmentsCount  Int
+  organizationsCount Int
+
+  // Resetar mensalmente
+  periodStart DateTime
+  periodEnd   DateTime
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, periodStart])
+  @@index([userId])
+}
+
+// ===== CUPONS E DESCONTOS =====
+
+model Coupon {
+  id          String  @id @default(cuid())
+  code        String  @unique
+  description String?
+
+  discountType  CouponType
+  discountValue Decimal    @db.Decimal(10, 2)
+
+  // Restrições
+  service        Service? // null = válido para todos
+  minPurchase    Decimal? @db.Decimal(10, 2)
+  maxDiscount    Decimal? @db.Decimal(10, 2)
+  maxUses        Int?
+  maxUsesPerUser Int      @default(1)
+
+  validFrom  DateTime
+  validUntil DateTime?
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  usages            CouponUsage[]
+  userSubscriptions UserSubscription[]
+
+  @@index([code, isActive])
+  @@index([validFrom, validUntil])
+}
+
+model CouponUsage {
+  id                 String @id @default(cuid())
+  couponId           String
+  coupon             Coupon @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  userId             String
+  user               User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userSubscriptionId String
+
+  discountApplied Decimal  @db.Decimal(10, 2)
+  usedAt          DateTime @default(now())
+
+  @@index([couponId])
+  @@index([userId])
 }
 
 // ===== ASSINATURAS DOS USUÁRIOS =====
@@ -121,15 +234,39 @@ model UserSubscription {
   startDate DateTime
   endDate   DateTime
 
+  // Trial
+  trialEndsAt DateTime?
+  isTrialUsed Boolean   @default(false)
+
   // Status
   status    SubscriptionStatus @default(PENDING)
   autoRenew Boolean            @default(true)
+
+  // Datas importantes
+  lastRenewalDate DateTime?
+  nextBillingDate DateTime?
+
+  // Cancelamento
+  cancelledAt             DateTime?
+  cancelReason            String?
+  cancellationRequestedBy String? // userId
+
+  // Para upgrade/downgrade
+  pendingPlanId        String?
+  pendingPlanStartDate DateTime?
+
+  // Cupom aplicado
+  couponId String?
+  coupon   Coupon? @relation(fields: [couponId], references: [id], onDelete: SetNull)
 
   // Mercado Pago
   mpPreferenceId   String?
   mpSubscriptionId String?
 
-  payments Payment[]
+  payments      Payment[]
+  history       SubscriptionHistory[]
+  notifications SubscriptionNotification[]
+  renewalConfig RenewalConfiguration?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -137,7 +274,69 @@ model UserSubscription {
   @@index([userId, status])
   @@index([planId])
   @@index([endDate])
+  @@index([status, endDate])
+  @@index([userId, status, planId])
+  @@index([nextBillingDate])
 }
+
+// ===== HISTÓRICO DE MUDANÇAS =====
+
+model SubscriptionHistory {
+  id             String           @id @default(cuid())
+  subscriptionId String
+  subscription   UserSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  previousStatus SubscriptionStatus
+  newStatus      SubscriptionStatus
+  reason         String?
+  changedBy      String? // userId de quem fez a mudança
+
+  metadata Json? // Dados adicionais sobre a mudança
+
+  createdAt DateTime @default(now())
+
+  @@index([subscriptionId])
+  @@index([subscriptionId, createdAt])
+}
+
+// ===== CONFIGURAÇÃO DE RENOVAÇÃO =====
+
+model RenewalConfiguration {
+  id             String           @id @default(cuid())
+  subscriptionId String           @unique
+  subscription   UserSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  maxRetries        Int     @default(3)
+  retryIntervalDays Int     @default(3)
+  sendReminderEmail Boolean @default(true)
+  gracePeriodDays   Int     @default(7)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ===== NOTIFICAÇÕES =====
+
+model SubscriptionNotification {
+  id             String           @id @default(cuid())
+  subscriptionId String
+  subscription   UserSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  type      NotificationType
+  sentAt    DateTime?
+  scheduled DateTime
+
+  // Para retry em caso de falha
+  attempts  Int     @default(0)
+  lastError String?
+
+  createdAt DateTime @default(now())
+
+  @@index([subscriptionId, scheduled])
+  @@index([scheduled, sentAt])
+}
+
+// ===== PAGAMENTOS =====
 
 model Payment {
   id String @id @default(cuid())
@@ -152,6 +351,14 @@ model Payment {
   amount         Decimal @db.Decimal(10, 2)
   discountAmount Decimal @default(0) @db.Decimal(10, 2)
   finalAmount    Decimal @db.Decimal(10, 2)
+  currency       String  @default("BRL")
+
+  // Parcelamento
+  installments Int @default(1)
+
+  // Período cobrado
+  billingPeriodStart DateTime?
+  billingPeriodEnd   DateTime?
 
   // Mercado Pago
   paymentMethod  MercadoPagoPaymentMethod
@@ -162,6 +369,13 @@ model Payment {
   // Status
   status PaymentStatus @default(PENDING)
   paidAt DateTime?
+
+  // Tentativas
+  attemptNumber Int @default(1)
+
+  // Fatura/Nota Fiscal
+  invoiceUrl    String?
+  invoiceNumber String?
 
   // Webhook e metadados
   metadata     Json?
@@ -174,6 +388,8 @@ model Payment {
   @@index([userSubscriptionId])
   @@index([status])
   @@index([mpPaymentId])
+  @@index([status, createdAt])
+  @@index([paidAt])
 }
 
 // ===== ENUMS =====
@@ -219,4 +435,20 @@ enum MercadoPagoPaymentMethod {
   CREDIT_CARD
   ACCOUNT_MONEY
   PIX
+}
+
+enum CouponType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+enum NotificationType {
+  PAYMENT_REMINDER // 3 dias antes
+  PAYMENT_DUE // no dia
+  PAYMENT_OVERDUE // após vencimento
+  RENEWAL_REMINDER // 7 dias antes
+  TRIAL_ENDING // 2 dias antes do trial acabar
+  SUBSCRIPTION_CANCELLED
+  SUBSCRIPTION_ACTIVATED
+  PAYMENT_FAILED
 }

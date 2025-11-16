@@ -1,13 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UserService } from 'src/user/application/services/user.service';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 
 
-
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get('ping')
+  ping() {
+    return 'pong';
+  }
 
   @Get()
   findAll() {

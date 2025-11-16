@@ -8,20 +8,79 @@ import { UpdateSubscriptionDto } from 'src/subscription/dto/update-subscription.
 export class SubscriptionService {
   constructor(private prismaService: PrismaService){}
 
-  create(createSubscriptionDto: CreateSubscriptionDTO) {
+  async create(createSubscriptionDto: CreateSubscriptionDTO) {
+    const { cloudFeatures, agendeFeatures, freelaFeatures, businessFeatures, ...planData } = createSubscriptionDto;
+
     return this.prismaService.subscriptionPlan.create({
-      data: createSubscriptionDto,
+      data: {
+        ...planData,
+        monthlyPrice: parseFloat(planData.monthlyPrice),
+        ...(cloudFeatures && {
+          cloudFeatures: {
+            create: cloudFeatures,
+          },
+        }),
+        ...(agendeFeatures && {
+          agendeFeatures: {
+            create: agendeFeatures,
+          },
+        }),
+        ...(freelaFeatures && {
+          freelaFeatures: {
+            create: freelaFeatures,
+          },
+        }),
+        ...(businessFeatures && {
+          businessFeatures: {
+            create: businessFeatures,
+          },
+        }),
+      },
+      include: {
+        cloudFeatures: true,
+        agendeFeatures: true,
+        freelaFeatures: true,
+        businessFeatures: true,
+      },
     });
   }
 
   findAll() {
-    return this.prismaService.subscriptionPlan.findMany();
+    return this.prismaService.subscriptionPlan.findMany({
+      include: {
+        cloudFeatures: true,
+        agendeFeatures: true,
+        freelaFeatures: true,
+        businessFeatures: true,
+      },
+    });
+  }
+
+  findAllPublic() {
+    return this.prismaService.subscriptionPlan.findMany({
+      where: {
+        isPublic: true,
+        isActive: true,
+      },
+      include: {
+        cloudFeatures: true,
+        agendeFeatures: true,
+        freelaFeatures: true,
+        businessFeatures: true,
+      },
+    });
   }
 
   findOne(id: string) {
     return this.prismaService.subscriptionPlan.findUnique({
       where: {
         id,
+      },
+      include: {
+        cloudFeatures: true,
+        agendeFeatures: true,
+        freelaFeatures: true,
+        businessFeatures: true,
       },
     });
   }
@@ -33,15 +92,73 @@ export class SubscriptionService {
         isPublic: true,
         isActive: true,
       },
+      include: {
+        cloudFeatures: true,
+        agendeFeatures: true,
+        freelaFeatures: true,
+        businessFeatures: true,
+      },
     });
   }
 
-  update(id: string, updateSubscriptionDto: UpdateSubscriptionDto) {
+  async update(id: string, updateSubscriptionDto: UpdateSubscriptionDto) {
+    const { cloudFeatures, agendeFeatures, freelaFeatures, businessFeatures, ...planData } = updateSubscriptionDto;
+
+    const updateData: any = {
+      ...planData,
+    };
+
+    if (planData.monthlyPrice) {
+      updateData.monthlyPrice = parseFloat(planData.monthlyPrice);
+    }
+
+    if (cloudFeatures) {
+      updateData.cloudFeatures = {
+        upsert: {
+          create: cloudFeatures,
+          update: cloudFeatures,
+        },
+      };
+    }
+
+    if (agendeFeatures) {
+      updateData.agendeFeatures = {
+        upsert: {
+          create: agendeFeatures,
+          update: agendeFeatures,
+        },
+      };
+    }
+
+    if (freelaFeatures) {
+      updateData.freelaFeatures = {
+        upsert: {
+          create: freelaFeatures,
+          update: freelaFeatures,
+        },
+      };
+    }
+
+    if (businessFeatures) {
+      updateData.businessFeatures = {
+        upsert: {
+          create: businessFeatures,
+          update: businessFeatures,
+        },
+      };
+    }
+
     return this.prismaService.subscriptionPlan.update({
       where: {
         id,
       },
-      data: updateSubscriptionDto,
+      data: updateData,
+      include: {
+        cloudFeatures: true,
+        agendeFeatures: true,
+        freelaFeatures: true,
+        businessFeatures: true,
+      },
     });
   }
 

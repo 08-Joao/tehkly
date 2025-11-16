@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from "next/image";
 import { MenuDots } from '@solar-icons/react/ssr';
@@ -29,6 +30,8 @@ const navLinks = [
 export const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { isLoggedIn, isCheckingAuth, isAdmin, userPhoto, signOut } = useAuth();
+    const router = useRouter();
+    const pathname = usePathname();
 
     // Define as URLs baseadas no ambiente
     const isProduction = process.env.NODE_ENV === 'production';
@@ -36,6 +39,25 @@ export const Navbar = () => {
 
     const signInUrl = `${authBaseUrl}/signin`;
     const signUpUrl = `${authBaseUrl}/signup`;
+
+    const handleNavLink = (href: string) => {
+        // Se o link é uma âncora
+        if (href.startsWith('#')) {
+            // Se estamos na home, apenas scroll para a âncora
+            if (pathname === '/') {
+                const element = document.querySelector(href);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                }
+            } else {
+                // Se não estamos na home, redireciona para home com a âncora
+                router.push(`/${href}`);
+            }
+        } else {
+            // Se não é âncora, navega normalmente
+            router.push(href);
+        }
+    };
 
     const handleSignInClick = () => {
         window.location.href = signInUrl;
@@ -66,14 +88,20 @@ export const Navbar = () => {
                 transition={{ duration: 0.5, ease: "easeOut" }}
                 className="fixed top-4 left-1/2 z-50 hidden -translate-x-1/2 items-center gap-6 rounded-2xl border border-foreground/10 bg-card/50 px-8 py-3 shadow-2xl shadow-black/20 backdrop-blur-xl md:flex"
             >
-                <a href="#" className="flex items-center gap-2 text-2xl font-bold text-foreground">
+                <button onClick={() => router.push('/')} className="flex items-center gap-2 text-2xl font-bold text-foreground cursor-pointer hover:opacity-80 transition-opacity">
                     <Image src="/teh-rex_background.png" alt="Tehkly Logo" width={32} height={32} />
                     <span>Tehkly</span>
-                </a>
+                </button>
                 <div className="h-6 w-px bg-foreground/10"></div>
                 <div className="flex items-center gap-6 text-sm font-medium text-muted-foreground">
                     {navLinks.map(link => (
-                        <a key={link.href} href={link.href} className="transition-colors hover:text-foreground">{link.label}</a>
+                        <button
+                            key={link.href}
+                            onClick={() => handleNavLink(link.href)}
+                            className="transition-colors hover:text-foreground cursor-pointer"
+                        >
+                            {link.label}
+                        </button>
                     ))}
                 </div>
                 <div className="h-6 w-px bg-foreground/10"></div>
@@ -95,11 +123,11 @@ export const Navbar = () => {
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem onClick={handleProfileClick}>
                                     <User className="mr-2 h-4 w-4" />
-                                    <span>Profile</span>
+                                    <span>Perfil</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={handleSubscriptionsClick}>
                                     <CreditCard className="mr-2 h-4 w-4" />
-                                    <span>Subscriptions</span>
+                                    <span>Minhas assinaturas</span>
                                 </DropdownMenuItem>
                                 {isAdmin && (
                                     <>
@@ -109,14 +137,14 @@ export const Navbar = () => {
                                             window.location.href = '/admin/subscription-plans';
                                         }}>
                                             <Shield className="mr-2 h-4 w-4" />
-                                            <span>Admin Panel</span>
+                                            <span>Painel de administração</span>
                                         </DropdownMenuItem>
                                     </>
                                 )}
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem onClick={handleSignOut} variant="destructive">
                                     <LogOut className="mr-2 h-4 w-4" />
-                                    <span>Sign Out</span>
+                                    <span>Sair</span>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -131,10 +159,10 @@ export const Navbar = () => {
 
             {/* Navbar para Mobile */}
             <div className="fixed top-0 z-50 flex w-full items-center justify-between border-b border-foreground/10 bg-background/80 p-4 backdrop-blur-lg md:hidden">
-                <a href="#" className="flex items-center gap-2 text-xl font-bold text-foreground">
+                <button onClick={() => router.push('/')} className="flex items-center gap-2 text-xl font-bold text-foreground cursor-pointer hover:opacity-80 transition-opacity">
                     <Image src="/teh-rex_background.png" alt="Tehkly Logo" width={28} height={28} />
                     <span>Tehkly</span>
-                </a>
+                </button>
                 <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(!isMenuOpen)}>
                     <MenuDots />
                 </Button>
@@ -160,9 +188,16 @@ export const Navbar = () => {
                         >
                             <div className="flex flex-col items-center gap-6 text-lg text-muted-foreground">
                                 {navLinks.map(link => (
-                                    <a key={link.href} href={link.href} className="transition-colors hover:text-foreground" onClick={() => setIsMenuOpen(false)}>
+                                    <button
+                                        key={link.href}
+                                        onClick={() => {
+                                            handleNavLink(link.href);
+                                            setIsMenuOpen(false);
+                                        }}
+                                        className="transition-colors hover:text-foreground cursor-pointer"
+                                    >
                                         {link.label}
-                                    </a>
+                                    </button>
                                 ))}
                                 <div className="my-4 h-px w-full bg-foreground/10"></div>
 
@@ -183,7 +218,7 @@ export const Navbar = () => {
                                                 }}
                                             >
                                                 <User className="mr-2 h-4 w-4" />
-                                                Profile
+                                                Perfil
                                             </Button>
                                             <Button
                                                 className="w-full"
@@ -194,7 +229,7 @@ export const Navbar = () => {
                                                 }}
                                             >
                                                 <CreditCard className="mr-2 h-4 w-4" />
-                                                Subscriptions
+                                                Minhas assinaturas
                                             </Button>
                                             {isAdmin && (
                                                 <Button
@@ -206,7 +241,7 @@ export const Navbar = () => {
                                                     }}
                                                 >
                                                     <Shield className="mr-2 h-4 w-4" />
-                                                    Admin Panel
+                                                    Painel de administração
                                                 </Button>
                                             )}
                                             <Button

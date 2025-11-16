@@ -30,6 +30,12 @@ export interface CloudFeatures {
   id: string;
   planId: string;
   storageGB: number;
+  maxUsers: number;
+  maxFileSize: number;
+  maxBandwidthGB: number;
+  allowPublicSharing: boolean;
+  allowCustomDomain: boolean;
+  supportLevel: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -40,6 +46,9 @@ export interface AgendeFeatures {
   maxAppointmentsPerMonth: number;
   maxOrganizations: number;
   maxPointsPerOrganization: number;
+  allowCustomBranding: boolean;
+  allowWhitelabel: boolean;
+  supportLevel: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -47,6 +56,11 @@ export interface AgendeFeatures {
 export interface FreelaFeatures {
   id: string;
   planId: string;
+  maxProjects: number;
+  maxClients: number;
+  allowInvoicing: boolean;
+  allowTimeTracking: boolean;
+  supportLevel: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -54,6 +68,7 @@ export interface FreelaFeatures {
 export interface BusinessFeatures {
   id: string;
   planId: string;
+  supportLevel: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -66,6 +81,7 @@ export interface SubscriptionPlan {
   monthlyPrice: number;
   quarterlyDiscount: number;
   annualDiscount: number;
+  trialDays: number;
   isActive: boolean;
   isPublic: boolean;
   createdAt: string;

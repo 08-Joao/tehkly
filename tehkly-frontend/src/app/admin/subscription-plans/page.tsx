@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Pencil, Trash2, Plus } from 'lucide-react';
 import Api from '@/services/Api';
+import { GlassBackground } from '@/components/backgrounds/GlassBackground';
 
 const serviceLabels: Record<Service, string> = {
   [Service.CLOUD]: 'Cloud',
@@ -96,86 +97,90 @@ export default function SubscriptionsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Planos de Assinatura</h1>
-          <p className="text-muted-foreground">Gerencie os planos disponíveis para os usuários</p>
+    <GlassBackground variant="minimal" className="min-h-screen bg-background text-foreground">
+      <div className="container mx-auto py-8 px-4 space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">Planos de Assinatura</h1>
+            <p className="text-muted-foreground">Gerencie os planos disponíveis para os usuários</p>
+          </div>
+          <Button onClick={() => router.push('/admin/subscription-plans/create')} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Novo Plano
+          </Button>
         </div>
-        <Button onClick={() => router.push('/admin/subscription-plans/create')} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Novo Plano
-        </Button>
-      </div>
 
-      <div className="rounded-lg border border-foreground/10 bg-card/30 backdrop-blur-lg">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Serviço</TableHead>
-              <TableHead>Nome</TableHead>
-              <TableHead>Preço Mensal</TableHead>
-              <TableHead>Desconto Trimestral</TableHead>
-              <TableHead>Desconto Anual</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Visibilidade</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {plans.length === 0 ? (
+        <div className="rounded-lg border border-foreground/10 bg-card/30 backdrop-blur-lg">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={8} className="h-24 text-center">
-                  <p className="text-muted-foreground">Nenhum plano cadastrado</p>
-                </TableCell>
+                <TableHead>Serviço</TableHead>
+                <TableHead>Nome</TableHead>
+                <TableHead>Preço Mensal</TableHead>
+                <TableHead>Desconto Trimestral</TableHead>
+                <TableHead>Desconto Anual</TableHead>
+                <TableHead>Trial (dias)</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Visibilidade</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
               </TableRow>
-            ) : (
-              plans.map((plan) => (
-                <TableRow key={plan.id}>
-                  <TableCell>
-                    <Badge variant="outline" className={serviceColors[plan.service]}>
-                      {serviceLabels[plan.service]}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="font-medium">{plan.name}</TableCell>
-                  <TableCell>{formatPrice(plan.monthlyPrice)}</TableCell>
-                  <TableCell>{plan.quarterlyDiscount}%</TableCell>
-                  <TableCell>{plan.annualDiscount}%</TableCell>
-                  <TableCell>
-                    <Badge variant={plan.isActive ? 'default' : 'secondary'}>
-                      {plan.isActive ? 'Ativo' : 'Inativo'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={plan.isPublic ? 'default' : 'secondary'}>
-                      {plan.isPublic ? 'Público' : 'Privado'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => router.push(`/admin/subscription-plans/edit/${plan.id}`)}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDelete(plan.id)}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+            </TableHeader>
+            <TableBody>
+              {plans.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={9} className="h-24 text-center">
+                    <p className="text-muted-foreground">Nenhum plano cadastrado</p>
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                plans.map((plan) => (
+                  <TableRow key={plan.id}>
+                    <TableCell>
+                      <Badge variant="outline" className={serviceColors[plan.service]}>
+                        {serviceLabels[plan.service]}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="font-medium">{plan.name}</TableCell>
+                    <TableCell>{formatPrice(plan.monthlyPrice)}</TableCell>
+                    <TableCell>{plan.quarterlyDiscount}%</TableCell>
+                    <TableCell>{plan.annualDiscount}%</TableCell>
+                    <TableCell>{plan.trialDays}</TableCell>
+                    <TableCell>
+                      <Badge variant={plan.isActive ? 'default' : 'secondary'}>
+                        {plan.isActive ? 'Ativo' : 'Inativo'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={plan.isPublic ? 'default' : 'secondary'}>
+                        {plan.isPublic ? 'Público' : 'Privado'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => router.push(`/admin/subscription-plans/edit/${plan.id}`)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDelete(plan.id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
-    </div>
+    </GlassBackground>
   );
 }

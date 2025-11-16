@@ -5,9 +5,15 @@ import { AuthGuard } from '../infrastructure/guards/auth.guard';
 import { UserModule } from 'src/user/application/user.module';
 
 @Module({
-  imports: [HttpModule, forwardRef(() => UserModule)],
+  imports: [
+    HttpModule.register({
+      timeout: 5000,
+      maxRedirects: 3,
+    }),
+    forwardRef(() => UserModule),
+  ],
   controllers: [AuthController],
   providers: [AuthGuard],
-  exports: [AuthGuard],
+  exports: [AuthGuard, HttpModule, forwardRef(() => UserModule)],
 })
-export class AuthModule {}
+export class AuthModule { }

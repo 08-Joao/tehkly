@@ -39,6 +39,16 @@ const Api = {
       }
     },
 
+    getPublicSubscriptionPlans: async function () {
+      try {
+        const response = await backendRoute.get('/subscription/public')
+        return response
+      } catch(e) {
+        console.log(e)
+        throw e
+      }
+    },
+
     getSubscriptionPlanById: async function (id: string) {
       try {
         const response = await backendRoute.get(`/subscription/${id}`)

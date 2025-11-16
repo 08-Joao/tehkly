@@ -6,6 +6,7 @@ const AUTH_COOKIE_NAME = 'accessToken'
 // Define as rotas públicas (que qualquer um pode acessar)
 const publicRoutes = [
   '/',
+  '/subscription-plans',
 ]
 
 // Função para verificar se a rota é pública

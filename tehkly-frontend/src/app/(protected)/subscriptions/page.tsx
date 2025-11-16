@@ -1,10 +1,16 @@
+'use client';
+
 import React from 'react'
+import { GlassBackground } from '@/components/backgrounds/GlassBackground';
 
 function Subscriptions() {
   return (
-    <div>
-      Subscription
-    </div>
+    <GlassBackground variant="minimal" className="min-h-screen bg-background text-foreground">
+      <div className="container mx-auto py-20 px-4">
+        <h1 className="text-4xl font-bold mb-8">Minhas Assinaturas</h1>
+        <p className="text-muted-foreground">Conteúdo de assinaturas em desenvolvimento...</p>
+      </div>
+    </GlassBackground>
   )
 }
 

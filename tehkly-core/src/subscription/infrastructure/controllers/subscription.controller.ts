@@ -1,17 +1,23 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
-import { CreateSubscriptionDTO } from '../dto/create-subscription.dto';
-import { SubscriptionService } from '../application/services/subscription.service';
-import { UpdateSubscriptionDto } from '../dto/update-subscription.dto';
 import { Service, UserRole } from 'generated/prisma';
-
+import { AuthGuard } from 'src/auth/infrastructure/guards/auth.guard';
+import { SubscriptionService } from 'src/subscription/application/services/subscription.service';
+import { CreateSubscriptionDTO } from 'src/subscription/dto/create-subscription.dto';
+import { UpdateSubscriptionDto } from 'src/subscription/dto/update-subscription.dto';
 
 @Controller('subscription')
 export class SubscriptionController {
   constructor(private readonly subscriptionService: SubscriptionService) { }
 
+  @UseGuards(AuthGuard)
   @Post()
   create(@Body() createSubscriptionDto: CreateSubscriptionDTO) {
     return this.subscriptionService.create(createSubscriptionDto);
+  }
+
+  @Get('public')
+  findAllPublic() {
+    return this.subscriptionService.findAllPublic();
   }
 
   @Get()

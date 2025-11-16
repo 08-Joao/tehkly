@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Toaster } from "@/components/ui/Toaster";
 import { motion } from 'framer-motion';
 import { Navbar } from '@/components/ui/Navbar';
+import { GlassBackground } from '@/components/backgrounds/GlassBackground';
 
 // --- TIPOS E DADOS ---
 type ToasterType = 'success' | 'error' | 'warning';
@@ -350,7 +351,7 @@ export default function Home() {
   const closeToaster = () => setToaster(null);
 
   return (
-    <div className="bg-background text-foreground selection:bg-primary/20">
+    <GlassBackground variant="intense" className="min-h-screen bg-background text-foreground selection:bg-primary/20">
       {toaster?.show && <Toaster message={toaster.message} type={toaster.type} onClose={closeToaster} />}
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -380,7 +381,7 @@ export default function Home() {
           <p>&copy; {new Date().getFullYear()} Tehkly. Todos os direitos reservados.</p>
         </div>
       </footer>
-    </div>
+    </GlassBackground>
   );
 }
 
