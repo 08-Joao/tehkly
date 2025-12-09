@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { Service, UserRole } from 'generated/prisma';
-import { AuthGuard } from 'src/auth/infrastructure/guards/auth.guard';
+import { Role } from 'src/auth/infrastructure/decorators';
+import { RoleGuard } from 'src/auth/infrastructure/guards/role.guard';
 import { SubscriptionService } from 'src/subscription/application/services/subscription.service';
 import { CreateSubscriptionDTO } from 'src/subscription/dto/create-subscription.dto';
 import { UpdateSubscriptionDto } from 'src/subscription/dto/update-subscription.dto';
@@ -9,7 +10,8 @@ import { UpdateSubscriptionDto } from 'src/subscription/dto/update-subscription.
 export class SubscriptionController {
   constructor(private readonly subscriptionService: SubscriptionService) { }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(RoleGuard)
+  @Role(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.ROOT)
   @Post()
   create(@Body() createSubscriptionDto: CreateSubscriptionDTO) {
     return this.subscriptionService.create(createSubscriptionDto);
@@ -20,6 +22,8 @@ export class SubscriptionController {
     return this.subscriptionService.findAllPublic();
   }
 
+  @UseGuards(RoleGuard)
+  @Role(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.ROOT)
   @Get()
   findAll() {
     return this.subscriptionService.findAll();
@@ -35,11 +39,15 @@ export class SubscriptionController {
     return this.subscriptionService.findAllByService(service);
   }
 
+  @UseGuards(RoleGuard)
+  @Role(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.ROOT)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateSubscriptionDto: UpdateSubscriptionDto) {
     return this.subscriptionService.update(id, updateSubscriptionDto);
   }
 
+  @UseGuards(RoleGuard)
+  @Role(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.ROOT)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.subscriptionService.remove(id);

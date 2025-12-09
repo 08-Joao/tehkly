@@ -90,7 +90,7 @@
   --primary: #69b3fd; /* Azul vibrante */
   --primary-foreground: #ffffff;
 
-  --secondary: #26A69A; /* Teal vibrante */
+  --secondary: #1cd4c2; /* Teal vibrante */
   --secondary-foreground: #1a1a1a;
 
   /* Acentos sutis derivados */
@@ -147,7 +147,7 @@
 
 /* Tema DARK - versão inversa do light */
 .dark {
-  --background: #1a1a1a;
+  --background: #0f0f0f;
   --foreground: #ffffff;
 
   /* Cores de destaque e texto */

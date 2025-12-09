@@ -4,9 +4,10 @@ import { UserModule } from './user/application/user.module';
 import { SubscriptionModule } from './subscription/application/subscription.module';
 import { PaymentModule } from './payment/application/payment.module';
 import { AuthModule } from './auth/application/auth.module';
+import { ContactModule } from './contact/application/contact.module';
 
 @Module({
-  imports: [PrismaModule, UserModule, SubscriptionModule, PaymentModule, AuthModule],
+  imports: [PrismaModule, UserModule, SubscriptionModule, PaymentModule, AuthModule, ContactModule],
   controllers: [],
   providers: [],
 })

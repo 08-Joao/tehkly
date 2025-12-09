@@ -1,3 +1,4 @@
+import { NewContactDto } from "@/dtos/newContact.dto";
 import { backendRoute, authRoute } from "./httpClient";
 
 const Api = {
@@ -98,6 +99,23 @@ const Api = {
         throw e
       }
     },
+
+    newContact: async function(data: NewContactDto) {
+      try {
+        const contactToken = process.env.NEXT_PUBLIC_CONTACT_TOKEN as string;
+
+        const response = await backendRoute.post('/contact', data, {
+          headers: {
+            'Content-Type': 'application/json',
+            'contact-token': contactToken
+          },
+        })
+        return response
+      } catch(e) {
+        console.log(e)
+        throw e
+      }
+    }
 }
 
 export default Api

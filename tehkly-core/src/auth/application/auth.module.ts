@@ -1,8 +1,8 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { AuthController } from '../infrastructure/controllers/auth.controller';
-import { AuthGuard } from '../infrastructure/guards/auth.guard';
 import { UserModule } from 'src/user/application/user.module';
+import { RoleGuard } from '../infrastructure/guards/role.guard';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { UserModule } from 'src/user/application/user.module';
     forwardRef(() => UserModule),
   ],
   controllers: [AuthController],
-  providers: [AuthGuard],
-  exports: [AuthGuard, HttpModule, forwardRef(() => UserModule)],
+  providers: [RoleGuard],
+  exports: [RoleGuard, HttpModule, forwardRef(() => UserModule)],
 })
 export class AuthModule { }

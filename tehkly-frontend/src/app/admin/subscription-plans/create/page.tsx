@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { Service } from '@/types/subscription';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,8 +17,9 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Sparkles } from 'lucide-react';
 import Api from '@/services/Api';
+import { GlassBackground } from '@/components/backgrounds/GlassBackground';
 
 const serviceLabels: Record<Service, string> = {
   [Service.CLOUD]: 'Cloud',
@@ -209,24 +211,34 @@ export default function CreateSubscriptionPlanPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => router.back()}
-          className="gap-2"
+    <GlassBackground variant="minimal" className="min-h-screen bg-background text-foreground">
+      <div className="container mx-auto py-8 px-6 space-y-8 pt-24 max-w-4xl">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex items-center gap-4"
         >
-          <ArrowLeft className="h-4 w-4" />
-          Voltar
-        </Button>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Criar Novo Plano</h1>
-          <p className="text-muted-foreground">Adicione um novo plano de assinatura</p>
-        </div>
-      </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => router.back()}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Voltar
+          </Button>
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="w-5 h-5 text-primary" />
+              <h1 className="text-4xl font-bold tracking-tight text-foreground">Criar Novo Plano</h1>
+            </div>
+            <p className="text-lg text-muted-foreground">Adicione um novo plano de assinatura</p>
+          </div>
+        </motion.div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
           <div className="rounded-lg bg-destructive/10 p-4 text-destructive border border-destructive/20">
             {error}
@@ -695,19 +707,30 @@ export default function CreateSubscriptionPlanPage() {
         </Card>
 
         {/* Botões */}
-        <div className="flex gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="flex gap-4 pt-4"
+        >
           <Button
             type="button"
             variant="outline"
             onClick={() => router.back()}
+            className="text-base font-semibold h-11"
           >
             Cancelar
           </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button 
+            type="submit" 
+            disabled={isLoading}
+            className="text-base font-semibold h-11 px-8"
+          >
             {isLoading ? 'Criando...' : 'Criar Plano'}
           </Button>
-        </div>
+        </motion.div>
       </form>
-    </div>
+      </div>
+    </GlassBackground>
   );
 }

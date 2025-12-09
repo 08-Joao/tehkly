@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, ReactNode } from 'react';
-import { ArrowRight, Code, Cloud, Server, Smartphone } from '@solar-icons/react/ssr';
+import { ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Code, Cloud, Server, Smartphone, Shield, Lightning, Letter, Phone, User as UserIcon } from '@solar-icons/react/ssr';
 import { FaDocker, FaReact, FaNode } from 'react-icons/fa';
 import { SiNextdotjs, SiNestjs, SiTypescript, SiPostgresql, SiN8N, SiKubernetes, SiNeo4J, SiRedis, SiNginx } from 'react-icons/si';
 import { Button } from '@/components/ui/button';
@@ -9,12 +10,35 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
 import { Toaster } from "@/components/ui/Toaster";
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { Navbar } from '@/components/ui/Navbar';
 import { GlassBackground } from '@/components/backgrounds/GlassBackground';
+import Image from 'next/image';
+import Api from '@/services/Api';
 
 // --- TIPOS E DADOS ---
 type ToasterType = 'success' | 'error' | 'warning';
+
+// Variantes de Animação para Stagger
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
+};
+
+const itemVariants: Variants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { type: "spring", stiffness: 300, damping: 24 }
+  }
+};
 
 const technologies = [
   { name: 'React / React Native', icon: <FaReact className="h-8 w-8" /> },
@@ -57,13 +81,6 @@ const projects = [
 
 type Project = typeof projects[0];
 
-const AuroraBackground = () => (
-  <div className="absolute inset-0 -z-10 overflow-hidden opacity-40 dark:opacity-30">
-    <div className="absolute top-1/4 left-1/4 h-[40vw] w-[40vw] animate-aurora rounded-full bg-primary/30 blur-[120px]" />
-    <div className="absolute bottom-1/4 right-1/4 h-[30vw] w-[30vw] animate-aurora-delay rounded-full bg-secondary/30 blur-[120px]" />
-  </div>
-);
-
 const GlassCard = ({ children, className = '' }: { children: ReactNode, className?: string }) => (
   <div className={`rounded-3xl border border-foreground/10 bg-card/50 shadow-2xl shadow-black/20 backdrop-blur-xl ${className}`}>
     {children}
@@ -73,75 +90,159 @@ const GlassCard = ({ children, className = '' }: { children: ReactNode, classNam
 // --- SEÇÕES DA PÁGINA ---
 
 const HeroSection = () => (
-  <section className="relative flex min-h-screen w-full items-center justify-center overflow-hidden text-center p-4">
-    <AuroraBackground />
-    <div className="z-10 flex flex-col items-center space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-      >
-        <Badge variant="outline" className="border-primary/50 bg-primary/10 py-2 px-4 text-sm font-medium text-primary backdrop-blur-sm">
-          Desenvolvimento de Software de Ponta a Ponta
-        </Badge>
-        <h1 className="mt-6 font-sans text-5xl font-bold tracking-tighter text-foreground sm:text-6xl md:text-8xl bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70">
-          Construindo o Futuro <br /> da Tecnologia, Hoje.
-        </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl">
-          Somos uma startup especializada em transformar ideias em produtos digitais robustos, escaláveis e de alto desempenho.
-        </p>
-      </motion.div>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="flex flex-col sm:flex-row items-center gap-4"
-      >
-        <Button size="lg" className="w-full sm:w-auto text-base font-semibold" onClick={() => document.getElementById('contato')?.scrollIntoView({ behavior: 'smooth' })}>
-          Comece seu Projeto <ArrowRight className="ml-2 h-5 w-5" />
-        </Button>
-        <Button size="lg" variant="secondary" className="w-full sm:w-auto text-base font-semibold" onClick={() => document.getElementById('servicos')?.scrollIntoView({ behavior: 'smooth' })}>
-          Nossos Serviços
-        </Button>
-      </motion.div>
+  <section className="relative pt-32 pb-20 px-6 overflow-hidden">
+    <div className="container mx-auto max-w-7xl">
+      <div className="grid lg:grid-cols-2 gap-12 items-center">
+        {/* Coluna Esquerda: Conteúdo */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="w-full"
+        >
+          <motion.div variants={itemVariants}>
+            <Badge variant="outline" className="mb-4 rounded-full border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm">
+              <Sparkles className="mr-2 h-3.5 w-3.5" />
+              Desenvolvimento de Software
+            </Badge>
+          </motion.div>
+
+          <motion.h1 variants={itemVariants} className="mb-4 text-4xl font-bold tracking-tight text-foreground lg:text-5xl xl:text-6xl">
+            Construindo o Futuro
+            <span className="block text-primary">
+              da Tecnologia, Hoje.
+            </span>
+          </motion.h1>
+
+          <motion.p variants={itemVariants} className="text-lg text-muted-foreground mb-8 leading-relaxed">
+            Somos uma startup especializada em transformar ideias em produtos digitais robustos, escaláveis e de alto desempenho.
+          </motion.p>
+
+          <motion.div variants={itemVariants} className="flex flex-wrap gap-6 mb-8">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Shield className="w-5 h-5 text-emerald-500" />
+              <span className="text-sm font-medium">Tecnologia de Ponta</span>
+            </div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Lightning className="w-5 h-5 text-amber-500" />
+              <span className="text-sm font-medium">Entrega Rápida</span>
+            </div>
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center gap-4">
+            <Button size="lg" className="group relative h-12 w-full sm:w-auto overflow-hidden rounded-xl bg-primary text-base font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:scale-[1.02] hover:shadow-primary/40" onClick={() => document.getElementById('contato')?.scrollIntoView({ behavior: 'smooth' })}>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:animate-shimmer" />
+              Comece seu Projeto <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-2" />
+            </Button>
+            <Button size="lg" variant="outline" className="w-full sm:w-auto text-base font-semibold rounded-xl" onClick={() => document.getElementById('servicos')?.scrollIntoView({ behavior: 'smooth' })}>
+              Nossos Serviços
+            </Button>
+          </motion.div>
+        </motion.div>
+
+        {/* Coluna Direita: Ilustração com Efeito Vidro */}
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="hidden lg:block relative"
+        >
+          <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-transparent opacity-20 blur-3xl rounded-full" />
+
+          <div className="relative aspect-square max-w-lg mx-auto transform transition-all duration-500 hover:scale-[1.02]">
+            {/* Card Efeito Vidro atrás da imagem */}
+            <div className="absolute inset-0 rounded-[3rem] border border-white/10 bg-white/5 backdrop-blur-sm shadow-2xl dark:bg-black/20" />
+
+            <div className="relative z-10 flex h-full w-full items-center justify-center p-10">
+              <Image
+                src="/Team work-pana.svg"
+                alt="Software development illustration"
+                width={600}
+                height={600}
+                className="h-full w-full object-contain drop-shadow-2xl"
+                priority
+              />
+            </div>
+
+            {/* Floating Element */}
+            {/* <div className="absolute -bottom-6 -right-6 z-20 rounded-xl border border-border bg-card p-4 shadow-xl ">
+              <div className="flex items-center gap-3">
+                <div className="flex -space-x-2">
+                  <div className="h-8 w-8 rounded-full bg-blue-500 ring-2 ring-background" />
+                  <div className="h-8 w-8 rounded-full bg-purple-500 ring-2 ring-background" />
+                  <div className="h-8 w-8 rounded-full bg-green-500 ring-2 ring-background" />
+                </div>
+                <div className="text-sm">
+                  <p className="font-bold text-foreground">50+ Projetos</p>
+                  <p className="text-muted-foreground text-xs">Entregues</p>
+                </div>
+              </div>
+            </div> */}
+
+          </div>
+        </motion.div>
+      </div>
     </div>
   </section>
 );
 
 const ServicesSection = () => {
   const services = [
-    { icon: Code, title: "Desenvolvimento Web", description: "Criamos websites e aplicações web modernas, responsivas e otimizadas para performance." },
-    { icon: Cloud, title: "Sistemas em Nuvem", description: "Infraestrutura escalável e segura usando as principais plataformas cloud do mercado." },
-    { icon: Server, title: "Automação de Sistemas", description: "Automatizamos processos repetitivos para aumentar produtividade e reduzir custos." },
-    { icon: Smartphone, title: "Aplicações Mobile", description: "Desenvolvemos apps nativos e híbridos para iOS e Android com excelente experiência de usuário." },
+    { icon: Code, title: "Desenvolvimento Web", description: "Criamos websites e aplicações web modernas, responsivas e otimizadas para performance.", features: ["React/Next.js", "TypeScript", "Responsivo"] },
+    { icon: Cloud, title: "Sistemas em Nuvem", description: "Infraestrutura escalável e segura usando as principais plataformas cloud do mercado.", features: ["Docker", "Kubernetes", "CI/CD"] },
+    { icon: Server, title: "Automação de Sistemas", description: "Automatizamos processos repetitivos para aumentar produtividade e reduzir custos.", features: ["n8n", "Webhooks", "APIs"] },
+    { icon: Smartphone, title: "Aplicações Mobile", description: "Desenvolvemos apps nativos e híbridos para iOS e Android com excelente experiência de usuário.", features: ["React Native", "Performance", "UX"] },
   ];
 
   return (
-    <section id="servicos" className="py-20 px-4">
-      <div className="container mx-auto max-w-6xl text-center">
-        <h2 className="font-sans text-4xl font-bold tracking-tighter text-foreground md:text-5xl">
-          Soluções Inovadoras para <span className="text-primary">Impulsionar seu Negócio</span>
-        </h2>
-        <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-          Do conceito ao deploy, entregamos excelência em cada etapa do desenvolvimento.
-        </p>
-        <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-          {services.map((service, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="group relative overflow-hidden rounded-3xl border border-foreground/10 bg-card/30 p-8 text-center backdrop-blur-lg transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10"
-            >
-              <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
-                <service.icon className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground">{service.title}</h3>
-              <p className="mt-2 text-muted-foreground">{service.description}</p>
-            </motion.div>
-          ))}
+    <section id="servicos" className="py-20 px-6">
+      <div className="container mx-auto max-w-7xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <Badge variant="outline" className="mb-4 rounded-full border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm">
+            <Sparkles className="mr-2 h-3.5 w-3.5" />
+            Nossos Serviços
+          </Badge>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6">
+            Soluções Inovadoras para
+            <span className="block text-primary">Impulsionar seu Negócio</span>
+          </h2>
+          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+            Do conceito ao deploy, entregamos excelência em cada etapa do desenvolvimento.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+          {services.map((service, index) => {
+            const Icon = service.icon;
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="group relative h-full rounded-3xl border-2 border-border bg-card/50 p-8 backdrop-blur-lg transition-all duration-500 hover:border-primary hover:shadow-2xl hover:-translate-y-2"
+              >
+                <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 rounded-3xl" />
+                <div className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
+                  <Icon className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-3">{service.title}</h3>
+                <p className="text-muted-foreground mb-6 leading-relaxed">{service.description}</p>
+                <div className="flex flex-wrap gap-2">
+                  {service.features.map((feature, idx) => (
+                    <Badge key={idx} variant="outline" className="text-xs">{feature}</Badge>
+                  ))}
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -165,15 +266,29 @@ const TechMarquee = () => (
 );
 
 const ProjectsSection = ({ openModal }: { openModal: (project: Project) => void }) => (
-  <section id="projetos" className="py-20 px-4">
-    <div className="container mx-auto max-w-6xl text-center">
-      <h2 className="font-sans text-4xl font-bold tracking-tighter text-foreground md:text-5xl">
-        Projetos que <span className="text-primary">Falam por Nós</span>
-      </h2>
-      <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-        Confira alguns dos desafios que transformamos em soluções de sucesso.
-      </p>
-      <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+  <section id="projetos" className="py-20 px-6">
+    <div className="container mx-auto max-w-7xl">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        viewport={{ once: true }}
+        className="text-center mb-16"
+      >
+        <Badge variant="outline" className="mb-4 rounded-full border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-sm">
+          <Sparkles className="mr-2 h-3.5 w-3.5" />
+          Nossos Projetos
+        </Badge>
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6">
+          Projetos que
+          <span className="block text-primary">Falam por Nós</span>
+        </h2>
+        <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+          Confira alguns dos desafios que transformamos em soluções de sucesso.
+        </p>
+      </motion.div>
+
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((project, index) => (
           <motion.div
             key={project.id}
@@ -181,17 +296,18 @@ const ProjectsSection = ({ openModal }: { openModal: (project: Project) => void 
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
             viewport={{ once: true }}
-            className="group relative flex flex-col rounded-3xl border border-foreground/10 bg-card/30 p-8 text-left backdrop-blur-lg transition-all duration-300 hover:!border-primary/30 hover:shadow-2xl hover:shadow-primary/10"
+            className="group relative h-full flex flex-col rounded-3xl border-2 border-border bg-card/50 p-8 backdrop-blur-lg transition-all duration-500 hover:border-primary hover:shadow-2xl hover:-translate-y-2"
           >
+            <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 rounded-3xl" />
             <div className="flex-grow">
-              <h3 className="text-2xl font-bold text-foreground">{project.title}</h3>
-              <p className="mt-3 text-muted-foreground">{project.description}</p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {project.tags.map(tag => <Badge key={tag} variant="secondary">{tag}</Badge>)}
+              <h3 className="text-2xl font-bold text-foreground mb-3">{project.title}</h3>
+              <p className="text-muted-foreground mb-6 leading-relaxed">{project.description}</p>
+              <div className="flex flex-wrap gap-2">
+                {project.tags.map(tag => <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>)}
               </div>
             </div>
-            <Button variant="ghost" className="mt-6 self-start" onClick={() => openModal(project)}>
-              Ver Detalhes <ArrowRight className="ml-2 h-4 w-4" />
+            <Button variant="ghost" className="mt-6 self-start text-primary hover:text-primary group/btn" onClick={() => openModal(project)}>
+              Ver Detalhes <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-2" />
             </Button>
           </motion.div>
         ))}
@@ -203,11 +319,12 @@ const ProjectsSection = ({ openModal }: { openModal: (project: Project) => void 
 const formatPhoneNumber = (value: string): string => {
   const numbers = value.replace(/\D/g, '').slice(0, 11);
   if (numbers.length <= 2) return numbers.length > 0 ? `(${numbers}` : '';
-  if (numbers.length <= 7) return `(${numbers.slice(0, 2)})${numbers.slice(2)}`;
-  return `(${numbers.slice(0, 2)})${numbers.slice(2, 7)}-${numbers.slice(7)}`;
+  if (numbers.length <= 7) return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+  return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
 };
 
-const ContactSection = ({ onSubmit }: { onSubmit: (formData: { name: string; email: string; message: string }) => void }) => {
+
+const ContactSection = ({ onSubmit }: any) => {
   const [isLoading, setIsLoading] = useState(false);
   const [phone, setPhone] = useState('');
 
@@ -222,109 +339,103 @@ const ContactSection = ({ onSubmit }: { onSubmit: (formData: { name: string; ema
     const message = formData.get('message') as string;
 
     try {
-      const response = await fetch('https://discord.com/api/webhooks/1434918396763439186/Ap_zLb9mWGhhoRVdDN1ikcRdOO0NQpgogmq8z_0nPLZGkZf6Czzetijhs5Ke-0TTcWLs', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          embeds: [
-            {
-              title: '📬 Novo Contato Recebido',
-              color: 3447003,
-              fields: [
-                {
-                  name: '👤 Nome',
-                  value: name,
-                  inline: true,
-                },
-                {
-                  name: '📧 Email',
-                  value: email,
-                  inline: true,
-                },
-                {
-                  name: '📱 Telefone',
-                  value: phoneValue,
-                  inline: true,
-                },
-                {
-                  name: '💬 Mensagem',
-                  value: message,
-                  inline: false,
-                },
-              ],
-              footer: {
-                text: 'Tehkly - Formulário de Contato',
-              },
-              timestamp: new Date().toISOString(),
-            },
-          ],
-        }),
-      });
-
-      if (response.ok) {
+      const response = await Api.newContact({
+        name,
+        email,
+        phone: phoneValue,
+        message,
+      })
+      if (response.status === 201 || response.status === 200) {
         onSubmit({ name, email, message });
         (e.target as HTMLFormElement).reset();
         setPhone('');
       } else {
-        throw new Error('Erro ao enviar mensagem');
+        throw new Error(`Erro ao enviar mensagem. Status: ${response.status}`);
       }
     } catch (error) {
-      console.error('Erro:', error);
+      console.error('Erro completo:', error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   return (
-    <section id="contato" className="py-20 px-4">
-      <div className="container mx-auto max-w-4xl">
-        <GlassCard className="p-8 md:p-12">
-          <div className="text-center">
-            <h2 className="font-sans text-4xl font-bold tracking-tighter text-foreground md:text-5xl">
-              Vamos construir algo <span className="text-primary">incrível juntos.</span>
-            </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">
-              Tem uma ideia ou um desafio para nós? Preencha o formulário e nossa equipe entrará em contato.
-            </p>
-          </div>
-          <form className="mt-12 space-y-6" onSubmit={handleFormSubmit}>
-            <div className="grid grid-cols-1 gap-6">
-              <Input name="name" placeholder="Seu nome completo *" required className="h-12 bg-card/50 backdrop-blur-sm" />
-            </div>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <Input name="email" type="email" placeholder="Seu melhor email *" required className="h-12 bg-card/50 backdrop-blur-sm" />
-              <Input type="tel" placeholder="Seu telefone *" value={phone} onChange={(e) => setPhone(formatPhoneNumber(e.target.value))} required className="h-12 bg-card/50 backdrop-blur-sm" />
-            </div>
-            <textarea
-              name="message"
-              rows={6}
-              className="w-full rounded-lg bg-card/50 p-4 text-foreground placeholder:text-muted-foreground resize-none backdrop-blur-sm border border-border focus:ring-2 focus:ring-primary"
-              placeholder="Descreva seu projeto, objetivos e o que você precisa..."
-              required
-            />
-            <div className="flex flex-col items-center sm:flex-row sm:justify-between gap-6">
-              <label className="flex cursor-pointer items-center gap-2.5 select-none text-sm text-muted-foreground">
-                <input type="checkbox" required className="sr-only peer" />
-                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-foreground/20 peer-checked:bg-primary peer-checked:border-primary">
-                  <svg className="h-3.5 w-3.5 text-primary-foreground opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+    <section id="contato" className="py-24 px-6 relative">
+      <div className="container mx-auto max-w-5xl">
+        <div className="rounded-[2.5rem] border border-border/50 bg-card/30 backdrop-blur-xl p-8 md:p-12 lg:p-16 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6">
+                Vamos construir algo
+                <span className="block text-primary">incrível juntos.</span>
+              </h2>
+              <p className="text-muted-foreground mb-8 text-lg">
+                Estamos prontos para tirar sua ideia do papel. Preencha o formulário e responderemos em até 24h.
+              </p>
+
+              <div className="space-y-4">
+
+                <div className="flex items-center gap-4 text-muted-foreground">
+                  <div className="h-10 w-10 rounded-full bg-background flex items-center justify-center border border-border">
+                    <Letter className="w-5 h-5" />
+                  </div>
+                  <span>contato@tehkly.com</span>
                 </div>
-                Concordo em compartilhar minhas informações.
-              </label>
-              <Button type="submit" size="lg" disabled={isLoading} className="w-full sm:w-auto text-base font-semibold">
-                {isLoading ? 'Enviando...' : 'Enviar Solicitação'} <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+                <div className="flex items-center gap-4 text-muted-foreground">
+                  <div className="h-10 w-10 rounded-full bg-background flex items-center justify-center border border-border">
+                    <Smartphone className="w-5 h-5" />
+                  </div>
+                  <span>+55 (31) 99606-6511</span>
+                  <span>+55 (31) 97568-2079</span>
+                </div>
+              </div>
             </div>
-          </form>
-        </GlassCard>
+            <div>
+              <div className="flex w-full items-end justify-end">
+                <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-sm font-medium text-primary mb-6">
+                  <Letter className="w-4 h-4 mr-2" /> Contato
+                </div>
+              </div>
+              <form onSubmit={handleFormSubmit} className="space-y-4 bg-background/40 p-6 rounded-3xl border border-border/40">
+
+                <Input name="name" placeholder="Seu nome" required />
+                <Input name="email" type="email" placeholder="Seu email" required />
+                <Input
+                  type="tel"
+                  placeholder="WhatsApp / Telefone"
+                  value={phone}
+                  onChange={(e) => setPhone(formatPhoneNumber(e.target.value))}
+                  required
+                />
+
+                <div className="relative group/input">
+                  <textarea
+                    name="message"
+                    rows={4}
+                    className="w-full rounded-xl border-border/60 bg-background/50 p-4 shadow-sm transition-all duration-300 placeholder:text-muted-foreground/50 focus:border-primary focus:bg-background focus:ring-[3px] focus:ring-primary/20 resize-none"
+                    placeholder="Como podemos ajudar?"
+                    required
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full h-12 rounded-xl text-base font-semibold shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]"
+                >
+                  {isLoading ? 'Enviando...' : 'Enviar Mensagem'}
+                </Button>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
-  );
+  )
 };
-
-
-// --- PÁGINA PRINCIPAL ---
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -351,11 +462,18 @@ export default function Home() {
   const closeToaster = () => setToaster(null);
 
   return (
-    <GlassBackground variant="intense" className="min-h-screen bg-background text-foreground selection:bg-primary/20">
+    <main className="relative min-h-screen w-full overflow-hidden bg-background font-sans selection:bg-primary/20">
       {toaster?.show && <Toaster message={toaster.message} type={toaster.type} onClose={closeToaster} />}
 
+      {/* BACKGROUND - Grid Pattern + Gradient */}
+      <div className="absolute inset-0 -z-10 h-full w-full bg-background">
+        <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+        <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/20 opacity-40 blur-[100px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_200px,transparent,var(--background))]" />
+      </div>
+
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="bg-card/80 backdrop-blur-lg border-foreground/10">
+        <DialogContent className="bg-card/80 backdrop-blur-lg border-border/50">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-foreground">{selectedProject?.title}</DialogTitle>
             <DialogDescription className="text-muted-foreground pt-4">{selectedProject?.fullDescription}</DialogDescription>
@@ -368,21 +486,17 @@ export default function Home() {
 
       <Navbar />
 
-      <main>
-        <HeroSection />
-        <ServicesSection />
-        <TechMarquee />
-        <ProjectsSection openModal={openProjectModal} />
-        <ContactSection onSubmit={handleContactSubmit} />
-      </main>
+      <HeroSection />
+      <ServicesSection />
+      <TechMarquee />
+      <ProjectsSection openModal={openProjectModal} />
+      <ContactSection onSubmit={handleContactSubmit} />
 
-      <footer className="border-t border-foreground/10 py-8 px-4">
+      <footer className="border-t border-border/50 py-8 px-4 backdrop-blur-sm">
         <div className="container mx-auto text-center text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} Tehkly. Todos os direitos reservados.</p>
         </div>
       </footer>
-    </GlassBackground>
+    </main>
   );
 }
-
-
